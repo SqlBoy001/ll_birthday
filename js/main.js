@@ -9,6 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const fireworksCanvas = document.getElementById('fireworks');
     const floatingWishes = document.getElementById('floatingWishes');
     
+    // 获取所有阶段元素
+    const stages = document.querySelectorAll('.wish-stage');
+    let currentStage = 0;
+    
     // 初始化烟花
     const firework = new Firework(fireworksCanvas);
     
@@ -48,44 +52,58 @@ document.addEventListener('DOMContentLoaded', () => {
         isMusicPlaying = !isMusicPlaying;
     });
 
-    // 打字效果
-    function typeWriter(text, element, speed = 100) {
-        let i = 0;
-        element.textContent = '';
-        return new Promise(resolve => {
-            function type() {
-                if (i < text.length) {
-                    element.textContent += text.charAt(i);
-                    i++;
-                    setTimeout(type, speed);
-                } else {
-                    resolve();
-                }
+    // 切换阶段
+    function switchToStage(stageIndex) {
+        stages.forEach((stage, index) => {
+            if (index === stageIndex) {
+                stage.classList.add('active');
+            } else {
+                stage.classList.remove('active');
             }
-            type();
         });
+
+        // 根据阶段执行不同的动画
+        switch(stageIndex) {
+            case 0: // 烟花阶段
+                firework.start();
+                break;
+            case 1: // 蛋糕阶段
+                firework.stop();
+                break;
+            case 2: // 照片回忆阶段
+                loadMemoryPhotos();
+                break;
+            case 3: // 最终祝福阶段
+                startFloatingWishes();
+                showFinalWishes();
+                break;
+        }
     }
 
-    // 祝福文字内容
-    const wishes = [
-        "亲爱的生日快乐！🎂",
-        "今天是属于你的特别日子",
-        "愿你永远保持那灿烂的笑容",
-        "我会一直陪在你身边",
-        "让我们一起创造更多美好的回忆",
-        "永远爱你 ❤️"
-    ];
+    // 加载照片墙
+    function loadMemoryPhotos() {
+        const photoWall = document.querySelector('.photo-wall');
+        photoWall.innerHTML = ''; // 清空现有照片
+        
+        // 添加照片（这里使用轮播图中的照片）
+        const photos = document.querySelectorAll('.swiper-slide img');
+        photos.forEach(photo => {
+            const img = document.createElement('img');
+            img.src = photo.src;
+            img.className = 'memory-photo';
+            img.alt = '美好回忆';
+            photoWall.appendChild(img);
+        });
+    }
 
     // 创建悬浮祝福
     function createFloatingWish(text) {
         const wish = document.createElement('div');
         wish.className = 'floating-wish';
         wish.textContent = text;
-        // 随机水平位置
         wish.style.left = `${Math.random() * 80 + 10}%`;
         floatingWishes.appendChild(wish);
 
-        // 动画结束后移除元素
         wish.addEventListener('animationend', () => {
             if (wish.parentNode === floatingWishes) {
                 floatingWishes.removeChild(wish);
@@ -107,19 +125,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let floatingInterval = null;
 
-    // 定时发送悬浮祝福
+    // 开始悬浮祝福
     function startFloatingWishes() {
         let index = 0;
-        // 清除之前的定时器
         if (floatingInterval) {
             clearInterval(floatingInterval);
         }
         
-        // 立即显示第一个祝福
         createFloatingWish(floatingTexts[index]);
         index = (index + 1) % floatingTexts.length;
 
-        // 设置定时器
         floatingInterval = setInterval(() => {
             if (wishContent.classList.contains('hidden')) {
                 clearInterval(floatingInterval);
@@ -130,37 +145,73 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 2000);
     }
 
+    // 打字效果
+    function typeWriter(text, element, speed = 100) {
+        let i = 0;
+        element.textContent = '';
+        return new Promise(resolve => {
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    resolve();
+                }
+            }
+            type();
+        });
+    }
+
+    // 最终祝福文字
+    const finalWishes = [
+        "亲爱的生日快乐！🎂",
+        "今天是属于你的特别日子",
+        "愿你永远保持那灿烂的笑容",
+        "我会一直陪在你身边",
+        "让我们一起创造更多美好的回忆",
+        "永远爱你 ❤️"
+    ];
+
+    // 显示最终祝福
+    async function showFinalWishes() {
+        typingText.textContent = '';
+        for (const wish of finalWishes) {
+            await typeWriter(wish, typingText);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+    }
+
+    // 绑定阶段切换按钮事件
+    document.querySelectorAll('.next-stage-btn').forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+            if (index === stages.length - 1) {
+                // 最后一个阶段，点击后重新开始
+                currentStage = 0;
+            } else {
+                currentStage = index + 1;
+            }
+            switchToStage(currentStage);
+        });
+    });
+
     // 显示祝福内容
     let isWishVisible = false;
-    showWishBtn.addEventListener('click', async () => {
+    showWishBtn.addEventListener('click', () => {
         if (!isWishVisible) {
             wishContent.classList.remove('hidden');
-            firework.start(); // 开始烟花效果
-            startFloatingWishes(); // 开始悬浮祝福
-            
-            // 清空之前的文字
-            typingText.textContent = '';
-            
-            // 逐行显示祝福语
-            for (const wish of wishes) {
-                await typeWriter(wish, typingText);
-                if (!isWishVisible) break; // 如果关闭了祝福，停止打字
-                await new Promise(resolve => setTimeout(resolve, 1000));
-            }
+            currentStage = 0;
+            switchToStage(currentStage);
+            showWishBtn.textContent = '关闭祝福';
         } else {
             wishContent.classList.add('hidden');
-            firework.stop(); // 停止烟花效果
+            firework.stop();
             if (floatingInterval) {
                 clearInterval(floatingInterval);
             }
-            typingText.textContent = '';
-            // 清除所有浮动祝福
-            while (floatingWishes.firstChild) {
-                floatingWishes.removeChild(floatingWishes.firstChild);
-            }
+            showWishBtn.textContent = '点击开启生日惊喜';
         }
         isWishVisible = !isWishVisible;
-        showWishBtn.textContent = isWishVisible ? '关闭祝福' : '点击查看生日祝福';
     });
 
     // 自动播放音乐（需要用户交互后）

@@ -50,24 +50,51 @@
 
         <!-- 祝福按钮 -->
         <div class="wish-button-container">
-            <button id="showWishBtn" class="wish-button">点击查看生日祝福</button>
+            <button id="showWishBtn" class="wish-button">点击开启生日惊喜</button>
         </div>
 
         <!-- 祝福内容 -->
         <div id="wishContent" class="wish-content hidden">
-            <div class="cake-container">
-                <div class="cake">
-                    <div class="cake-top">
-                        <div class="candle">
-                            <div class="flame"></div>
-                        </div>
-                    </div>
-                    <div class="cake-middle"></div>
-                    <div class="cake-bottom"></div>
-                </div>
+            <!-- 第一阶段：烟花 -->
+            <div id="stage1" class="wish-stage active">
+                <div class="stage-text">看，为你绽放的烟花！</div>
+                <button class="next-stage-btn">继续</button>
             </div>
-            <div class="floating-wishes" id="floatingWishes"></div>
-            <div class="typing-text" id="typingText"></div>
+
+            <!-- 第二阶段：蛋糕 -->
+            <div id="stage2" class="wish-stage">
+                <div class="cake-container">
+                    <div class="cake">
+                        <div class="cake-top">
+                            <div class="candle">
+                                <div class="flame"></div>
+                            </div>
+                        </div>
+                        <div class="cake-middle"></div>
+                        <div class="cake-bottom"></div>
+                    </div>
+                </div>
+                <div class="stage-text">许个愿吧~</div>
+                <button class="next-stage-btn">继续</button>
+            </div>
+
+            <!-- 第三阶段：照片回忆 -->
+            <div id="stage3" class="wish-stage">
+                <div class="memory-container">
+                    <div class="memory-text">这是我们的故事...</div>
+                    <div class="photo-wall">
+                        <!-- 照片墙会通过 JS 动态添加 -->
+                    </div>
+                </div>
+                <button class="next-stage-btn">继续</button>
+            </div>
+
+            <!-- 第四阶段：最终祝福 -->
+            <div id="stage4" class="wish-stage">
+                <div class="floating-wishes" id="floatingWishes"></div>
+                <div class="typing-text" id="typingText"></div>
+                <button class="next-stage-btn">重新开始</button>
+            </div>
         </div>
 
         <!-- 烟花画布 -->

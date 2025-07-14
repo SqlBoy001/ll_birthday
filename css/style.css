@@ -1,0 +1,311 @@
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Ma Shan Zheng', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe9e9 100%);
+    min-height: 100vh;
+    color: #333;
+    position: relative;
+}
+
+.container {
+    max-width: 100%;
+    padding: 20px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* 音乐播放器样式 */
+.music-box {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+.music-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: rotate 3s linear infinite;
+}
+
+.music-btn.paused {
+    animation-play-state: paused;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 计时器样式 */
+.counter-section {
+    text-align: center;
+    margin: 20px 0;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.days-count {
+    font-size: 3em;
+    color: #ff6b81;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+/* 照片轮播样式 */
+.swiper-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 30px auto;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 祝福按钮样式 */
+.wish-button-container {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.wish-button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    background: #ff6b81;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.wish-button:hover {
+    transform: scale(1.05);
+}
+
+/* 祝福内容样式 */
+.wish-content {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    opacity: 1;
+    transition: opacity 0.5s ease;
+    position: relative;
+    min-height: 400px;
+}
+
+.wish-content.hidden {
+    display: none;
+    opacity: 0;
+}
+
+.typing-text {
+    font-size: 1.2em;
+    line-height: 1.8;
+    color: #666;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* 蛋糕容器样式 */
+.cake-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 20px auto;
+}
+
+.cake {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 120px;
+    animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateX(-50%) translateY(0px); }
+    50% { transform: translateX(-50%) translateY(-10px); }
+}
+
+.cake-top {
+    position: relative;
+    width: 100%;
+    height: 30px;
+    background: #ff9999;
+    border-radius: 10px 10px 0 0;
+}
+
+.cake-middle {
+    width: 100%;
+    height: 40px;
+    background: #ffb3b3;
+}
+
+.cake-bottom {
+    width: 100%;
+    height: 40px;
+    background: #ffcccc;
+    border-radius: 0 0 10px 10px;
+}
+
+.candle {
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    width: 8px;
+    height: 25px;
+    background: #fff;
+    border-radius: 4px;
+    transform: translateX(-50%);
+}
+
+.flame {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    width: 12px;
+    height: 20px;
+    background: #ff6b81;
+    border-radius: 50% 50% 20% 20%;
+    transform: translateX(-50%);
+    animation: flicker 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes flicker {
+    0% { transform: translateX(-50%) scale(1); opacity: 1; }
+    100% { transform: translateX(-50%) scale(1.2); opacity: 0.8; }
+}
+
+/* 悬浮祝福语样式 */
+.floating-wishes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.floating-wish {
+    position: absolute;
+    color: #ff6b81;
+    font-size: 1.2em;
+    white-space: nowrap;
+    opacity: 0;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    animation: float-up 4s ease-out forwards;
+}
+
+@keyframes float-up {
+    0% {
+        transform: translateY(100%) translateX(-50%);
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100%) translateX(-50%);
+        opacity: 0;
+    }
+}
+
+/* 烟花画布样式 */
+#fireworks {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 署名样式 */
+.signature {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+}
+
+.author {
+    font-size: 1.5em;
+    color: #ff6b81;
+    margin: 10px 0;
+}
+
+.date {
+    color: #999;
+    font-size: 0.9em;
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .wish-button {
+        padding: 12px 25px;
+        font-size: 1.1em;
+    }
+
+    .days-count {
+        font-size: 2.5em;
+    }
+
+    .typing-text {
+        font-size: 1.1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .music-btn {
+        width: 35px;
+        height: 35px;
+    }
+
+    .days-count {
+        font-size: 2em;
+    }
+
+    .wish-button {
+        padding: 10px 20px;
+        font-size: 1em;
+    }
+} 

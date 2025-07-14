@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生日快乐！亲爱的</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Swiper轮播图样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <!-- 动画库 -->
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 背景音乐 -->
+    <div class="music-box">
+        <audio id="bgMusic" loop>
+            <source src="music/background.mp3" type="audio/mp3">
+        </audio>
+        <button id="musicBtn" class="music-btn">
+            <span class="music-icon">🎵</span>
+        </button>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="container">
+        <!-- 顶部计时器 -->
+        <div class="counter-section">
+            <p>我们已经相识了</p>
+            <div id="daysCounter" class="days-count">0</div>
+            <p>天</p>
+        </div>
+
+        <!-- 照片轮播 -->
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                <!-- 在这里添加照片 -->
+                <div class="swiper-slide">
+                    <img src="images/photo1.jpg" alt="我们的照片">
+                </div>
+                <div class="swiper-slide">
+                    <img src="images/photo2.jpg" alt="我们的照片">
+                </div>
+                <div class="swiper-slide">
+                    <img src="images/photo3.jpg" alt="我们的照片">
+                </div>
+            </div>
+            <!-- 添加导航按钮 -->
+            <div class="swiper-pagination"></div>
+        </div>
+
+        <!-- 祝福按钮 -->
+        <div class="wish-button-container">
+            <button id="showWishBtn" class="wish-button">点击查看生日祝福</button>
+        </div>
+
+        <!-- 祝福内容 -->
+        <div id="wishContent" class="wish-content hidden">
+            <div class="cake-container">
+                <div class="cake">
+                    <div class="cake-top">
+                        <div class="candle">
+                            <div class="flame"></div>
+                        </div>
+                    </div>
+                    <div class="cake-middle"></div>
+                    <div class="cake-bottom"></div>
+                </div>
+            </div>
+            <div class="floating-wishes" id="floatingWishes"></div>
+            <div class="typing-text" id="typingText"></div>
+        </div>
+
+        <!-- 烟花画布 -->
+        <canvas id="fireworks"></canvas>
+
+        <!-- 署名 -->
+        <div class="signature">
+            <p>爱你的 ❤️</p>
+            <p class="author">小王</p>
+            <p class="date">2024.03.21</p>
+        </div>
+    </div>
+
+    <!-- 引入必要的脚本 -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="js/fireworks.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 

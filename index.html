@@ -57,60 +57,45 @@
         <div id="wishContent" class="wish-content hidden">
             <!-- 第一阶段：烟花 -->
             <div id="stage1" class="wish-stage active">
-                <div class="stage-text">看，为你绽放的烟花！</div>
-                <button class="next-stage-btn">继续</button>
+                <div class="fireworks-container">
+                    <img src="images/fireworks.gif" alt="烟花" class="fireworks-gif">
+                </div>
+                <div class="stage-content">
+                    <div class="stage-text">看，为你绽放的烟花！</div>
+                    <button class="next-stage-btn">猜猜看～</button>
+                </div>
             </div>
 
-            <!-- 第二阶段：蛋糕 -->
+            <!-- 第二阶段：蛋糕和照片 -->
             <div id="stage2" class="wish-stage">
                 <div class="cake-container">
-                    <div class="cake">
-                        <div class="cake-top">
-                            <div class="candle">
-                                <div class="flame"></div>
-                            </div>
-                        </div>
-                        <div class="cake-middle"></div>
-                        <div class="cake-bottom"></div>
-                    </div>
+                    <img src="images/cake.gif" alt="生日蛋糕" class="cake-gif">
+                    <div id="candleLight" class="candle-light"></div>
                 </div>
-                <div class="stage-text">许个愿吧~</div>
-                <button class="next-stage-btn">继续</button>
-            </div>
-
-            <!-- 第三阶段：照片回忆 -->
-            <div id="stage3" class="wish-stage">
-                <div class="memory-container">
-                    <div class="memory-text">这是我们的故事...</div>
-                    <div class="photo-wall">
-                        <!-- 照片墙会通过 JS 动态添加 -->
-                    </div>
+                
+                <!-- 照片和祝福容器 -->
+                <div class="memories-container" id="memoriesContainer">
+                    <!-- 照片和祝福会通过 JavaScript 动态添加 -->
                 </div>
-                <button class="next-stage-btn">继续</button>
-            </div>
 
-            <!-- 第四阶段：最终祝福 -->
-            <div id="stage4" class="wish-stage">
-                <div class="floating-wishes" id="floatingWishes"></div>
-                <div class="typing-text" id="typingText"></div>
-                <button class="next-stage-btn">重新开始</button>
+                <div class="stage-text" id="guessText">猜猜这是哪一天？</div>
+                <button id="makeWishBtn" class="wish-btn">许愿</button>
             </div>
         </div>
 
-        <!-- 烟花画布 -->
-        <canvas id="fireworks"></canvas>
+        <!-- 黑幕遮罩 -->
+        <div id="darkOverlay" class="dark-overlay"></div>
 
         <!-- 署名 -->
         <div class="signature">
             <p>爱你的 ❤️</p>
             <p class="author">小王</p>
-            <p class="date">2024.03.21</p>
+            <p class="date">2025.07.21</p>
         </div>
     </div>
 
     <!-- 引入必要的脚本 -->
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-    <script src="js/fireworks.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html> 

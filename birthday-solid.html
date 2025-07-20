@@ -723,14 +723,34 @@
                 cakeImg.onload = () => {
                     console.log('✅ 生日蛋糕GIF加载完成，准备显示');
                     // GIF加载完成后，确保cake元素能正常显示
-                    const cakeElement = document.querySelector('#cake img');
+                    const cakeElement = document.querySelector('#cake-gif');
                     if (cakeElement) {
+                        // 设置GIF源并显示
                         cakeElement.src = 'assets/images/birthday-cake.gif';
-                        console.log('🎂 生日蛋糕GIF已设置到页面');
+                        cakeElement.style.display = 'block';
+                        
+                        // 隐藏emoji蛋糕
+                        const emojiCake = document.querySelector('#emoji-cake');
+                        if (emojiCake) {
+                            emojiCake.style.display = 'none';
+                        }
+                        
+                        console.log('🎂 生日蛋糕GIF已设置到页面并显示');
+                        
+                        // 标记GIF已准备就绪
+                        window.gifPreloaded = true;
+                    } else {
+                        console.warn('⚠️ 找不到cake-gif元素');
                     }
                 };
                 cakeImg.onerror = () => {
-                    console.warn('⚠️ 生日蛋糕GIF加载失败');
+                    console.warn('⚠️ 生日蛋糕GIF加载失败，使用emoji蛋糕');
+                    // 如果GIF加载失败，确保emoji蛋糕显示
+                    const emojiCake = document.querySelector('#emoji-cake');
+                    if (emojiCake) {
+                        emojiCake.style.display = 'block';
+                    }
+                    window.gifPreloaded = false;
                 };
                 cakeImg.src = 'assets/images/birthday-cake.gif';
             }
@@ -869,6 +889,24 @@
             function showCake() {
                 const cake = document.getElementById('cake-section');
                 cake.classList.add('animate-cake');
+                
+                // 检查GIF是否已预加载
+                if (window.gifPreloaded) {
+                    console.log('🎂 GIF已预加载，显示GIF蛋糕');
+                    const cakeGif = document.querySelector('#cake-gif');
+                    const emojiCake = document.querySelector('#emoji-cake');
+                    if (cakeGif && emojiCake) {
+                        cakeGif.style.display = 'block';
+                        emojiCake.style.display = 'none';
+                    }
+                } else {
+                    console.log('🎂 GIF未预加载，显示emoji蛋糕');
+                    const emojiCake = document.querySelector('#emoji-cake');
+                    if (emojiCake) {
+                        emojiCake.style.display = 'block';
+                    }
+                }
+                
                 playSound('chime');
                 setTimeout(() => showStars(), 800);
             }

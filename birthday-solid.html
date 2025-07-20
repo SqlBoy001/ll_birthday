@@ -604,14 +604,24 @@
             function startBackgroundMusic() {
                 if (!elements.backgroundMusic) return;
                 
-                // 多重尝试播放音乐
-                elements.backgroundMusic.play().then(() => {
-                    console.log('🎵 生日音乐自动开始播放');
-                    removeMusicPrompt(); // 移除任何音乐提示
-                }).catch(e => {
-                    console.log('自动播放失败:', e.message);
-                    showMusicClickPrompt(); // 显示点击提示
-                });
+                // 检查是否有预加载状态
+                const isPreloaded = localStorage.getItem('birthdayResourcesLoaded') === 'true';
+                
+                if (isPreloaded) {
+                    console.log('🚀 检测到预加载状态，即时播放音乐');
+                    // 预加载完成，立即播放
+                    elements.backgroundMusic.play().then(() => {
+                        console.log('🎵 预加载音乐立即开始播放');
+                        removeMusicPrompt();
+                    }).catch(e => {
+                        console.log('预加载音乐播放失败:', e.message);
+                        showMusicClickPrompt();
+                    });
+                } else {
+                    // 没有预加载，等待用户交互
+                    console.log('⏳ 未检测到预加载，等待用户交互');
+                    showMusicClickPrompt();
+                }
             }
 
             function showMusicClickPrompt() {
@@ -1210,56 +1220,7 @@
                 console.log('📳 触摸反馈已初始化');
             }
 
-            // 移动端专用的生日祝福语
-            function showMobileBirthdayMessage() {
-                const message = document.createElement('div');
-                message.style.cssText = `
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    background: rgba(255, 105, 180, 0.95);
-                    color: white;
-                    padding: 1.5rem;
-                    border-radius: 15px;
-                    text-align: center;
-                    z-index: 1000;
-                    max-width: 90%;
-                    font-size: 1rem;
-                    line-height: 1.5;
-                `;
-                message.innerHTML = `
-                    <h3 style="margin-bottom: 1rem;">🎂 移动端生日祝福 🎂</h3>
-                    <p>👆 向上滑动：烟花绽放</p>
-                    <p>👇 向下滑动：爱心飘洒</p>
-                    <p>👆 点击屏幕：创造惊喜</p>
-                    <button onclick="this.parentNode.remove()" style="
-                        margin-top: 1rem;
-                        padding: 0.5rem 1rem;
-                        background: white;
-                        color: #FF69B4;
-                        border: none;
-                        border-radius: 20px;
-                        cursor: pointer;
-                    ">知道了</button>
-                `;
-                
-                document.body.appendChild(message);
-                
-                // 5秒后自动消失
-                setTimeout(() => {
-                    if (message.parentNode) {
-                        message.remove();
-                    }
-                }, 5000);
-            }
-
-            // 在页面完全加载后显示移动端提示
-            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                setTimeout(() => {
-                    showMobileBirthdayMessage();
-                }, 3000);
-            }
+            // 移动端提示已删除，预加载解决了资源加载问题
 
             // 导航功能已移除
 

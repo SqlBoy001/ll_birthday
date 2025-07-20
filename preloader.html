@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菱菱生日祝福 - 加载中</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loader-container {
+            text-align: center;
+            z-index: 10;
+        }
+
+        .title {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .progress-container {
+            width: 300px;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ff8e53);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        .progress-text {
+            font-size: 1em;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        .loading-hearts {
+            margin-top: 30px;
+        }
+
+        .heart {
+            color: #ff6b9d;
+            font-size: 1.5em;
+            margin: 0 5px;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        .heart:nth-child(1) { animation-delay: 0s; }
+        .heart:nth-child(2) { animation-delay: 0.3s; }
+        .heart:nth-child(3) { animation-delay: 0.6s; }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%;
+            animation: float 3s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.3); opacity: 1; }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .title { font-size: 2em; }
+            .progress-container { width: 280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="loader-container">
+        <h1 class="title">🎂 菱菱生日祝福</h1>
+        <p class="subtitle">正在为你准备专属的生日惊喜...</p>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="progress-text" id="progressText">正在加载资源... 0%</div>
+        
+        <div class="loading-hearts">
+            <span class="heart">💕</span>
+            <span class="heart">💖</span>
+            <span class="heart">💕</span>
+        </div>
+    </div>
+
+    <!-- 隐藏的预加载资源 -->
+    <div class="hidden">
+        <img id="cakeGif" src="assets/images/birthday-cake.gif" alt="生日蛋糕">
+        <img id="memory1" src="assets/images/memories/memory1.jpg" alt="回忆1">
+        <img id="memory2" src="assets/images/memories/memory2.jpg" alt="回忆2">
+        <img id="memory3" src="assets/images/memories/memory3.jpg" alt="回忆3">
+        <img id="memory4" src="assets/images/memories/memory4.jpg" alt="回忆4">
+        <img id="memory5" src="assets/images/memories/memory5.jpg" alt="回忆5">
+        <img id="memory6" src="assets/images/memories/memory6.jpg" alt="回忆6">
+        <img id="memory7" src="assets/images/memories/memory7.jpg" alt="回忆7">
+        <img id="memory8" src="assets/images/memories/memory8.jpg" alt="回忆8">
+        
+        <audio id="happyBirthdayAudio" preload="auto">
+            <source src="assets/audio/happy-birthday.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="birthdaySongAudio" preload="auto">
+            <source src="assets/audio/birthday-song.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="lotteryAudio" preload="auto">
+            <source src="assets/audio/lottery.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        class Preloader {
+            constructor() {
+                this.progress = 0;
+                this.loadedCount = 0;
+                this.totalResources = 0;
+                this.resources = [];
+                this.progressBar = document.getElementById('progressBar');
+                this.progressText = document.getElementById('progressText');
+                
+                this.init();
+            }
+
+            init() {
+                this.createParticles();
+                this.collectResources();
+                this.startLoading();
+            }
+
+            createParticles() {
+                const particlesContainer = document.getElementById('particles');
+                for (let i = 0; i < 20; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.width = particle.style.height = (Math.random() * 6 + 2) + 'px';
+                    particle.style.animationDelay = Math.random() * 3 + 's';
+                    particle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    particlesContainer.appendChild(particle);
+                }
+            }
+
+            collectResources() {
+                // 收集所有需要预加载的资源
+                const images = [
+                    'cakeGif', 'memory1', 'memory2', 'memory3', 'memory4',
+                    'memory5', 'memory6', 'memory7', 'memory8'
+                ];
+                
+                const audios = [
+                    'happyBirthdayAudio', 'birthdaySongAudio', 'lotteryAudio'
+                ];
+
+                images.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        this.resources.push({
+                            type: 'image',
+                            element: element,
+                            name: element.alt || id
+                        });
+                    }
+                });
+
+                audios.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        this.resources.push({
+                            type: 'audio',
+                            element: element,
+                            name: id
+                        });
+                    }
+                });
+
+                this.totalResources = this.resources.length;
+                console.log(`找到 ${this.totalResources} 个资源需要预加载`);
+            }
+
+            startLoading() {
+                const promises = this.resources.map((resource, index) => {
+                    return new Promise((resolve, reject) => {
+                        const element = resource.element;
+                        
+                        const onLoad = () => {
+                            this.loadedCount++;
+                            this.updateProgress(resource.name);
+                            console.log(`✅ 已加载: ${resource.name} (${this.loadedCount}/${this.totalResources})`);
+                            resolve();
+                        };
+
+                        const onError = (error) => {
+                            console.warn(`⚠️ 加载失败: ${resource.name}`, error);
+                            this.loadedCount++;
+                            this.updateProgress(resource.name + ' (跳过)');
+                            resolve(); // 继续加载其他资源
+                        };
+
+                        if (resource.type === 'image') {
+                            if (element.complete && element.naturalWidth > 0) {
+                                onLoad();
+                            } else {
+                                element.addEventListener('load', onLoad);
+                                element.addEventListener('error', onError);
+                            }
+                        } else if (resource.type === 'audio') {
+                            if (element.readyState >= 3) { // HAVE_FUTURE_DATA
+                                onLoad();
+                            } else {
+                                element.addEventListener('canplaythrough', onLoad);
+                                element.addEventListener('error', onError);
+                                element.load(); // 开始加载音频
+                            }
+                        }
+                    });
+                });
+
+                Promise.all(promises).then(() => {
+                    setTimeout(() => {
+                        this.completeLoading();
+                    }, 500); // 稍作延迟，让用户看到100%
+                });
+            }
+
+            updateProgress(resourceName) {
+                this.progress = Math.round((this.loadedCount / this.totalResources) * 100);
+                this.progressBar.style.width = this.progress + '%';
+                this.progressText.textContent = `正在加载 ${resourceName}... ${this.progress}%`;
+            }
+
+            completeLoading() {
+                this.progressBar.style.width = '100%';
+                this.progressText.textContent = '加载完成！准备进入生日祝福页面... 🎉';
+                
+                // 将加载状态保存到localStorage
+                localStorage.setItem('birthdayResourcesLoaded', 'true');
+                localStorage.setItem('preloadTime', Date.now().toString());
+                
+                setTimeout(() => {
+                    // 跳转到生日祝福页面
+                    window.location.href = 'birthday-solid.html';
+                }, 1500);
+            }
+        }
+
+        // 检查是否需要预加载
+        function checkNeedPreload() {
+            const lastPreload = localStorage.getItem('preloadTime');
+            const now = Date.now();
+            
+            // 如果超过1小时，重新预加载
+            if (!lastPreload || (now - parseInt(lastPreload)) > 3600000) {
+                return true;
+            }
+            
+            return !localStorage.getItem('birthdayResourcesLoaded');
+        }
+
+        // 启动预加载器
+        if (checkNeedPreload()) {
+            console.log('🚀 开始预加载资源...');
+            new Preloader();
+        } else {
+            console.log('✅ 资源已缓存，直接跳转');
+            document.querySelector('.subtitle').textContent = '资源已准备就绪，即将进入...';
+            document.querySelector('.progress-bar').style.width = '100%';
+            document.querySelector('.progress-text').textContent = '准备完成！🎉';
+            setTimeout(() => {
+                window.location.href = 'birthday-solid.html';
+            }, 1000);
+        }
+    </script>
+</body>
+</html> 

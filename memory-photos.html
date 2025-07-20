@@ -445,19 +445,31 @@
             if (backgroundMusic) {
                 backgroundMusic.volume = 0.4; // 设置音量为40%
                 
-                // 尝试自动播放背景音乐
-                backgroundMusic.play().then(() => {
-                    console.log('🎵 背景音乐自动播放成功');
-                }).catch(e => {
-                    console.log('🎵 背景音乐自动播放失败，等待用户交互:', e.message);
-                    // 添加点击事件监听器，用户首次交互后开始播放
+                // 检查预加载状态
+                const isPreloaded = localStorage.getItem('birthdayResourcesLoaded') === 'true';
+                
+                if (isPreloaded) {
+                    console.log('🚀 检测到预加载状态，立即播放回忆音乐');
+                    // 预加载完成，立即播放
+                    backgroundMusic.play().then(() => {
+                        console.log('🎵 预加载回忆音乐立即开始播放');
+                    }).catch(e => {
+                        console.log('🎵 预加载音乐播放失败，等待用户交互:', e.message);
+                        addUserInteractionForMusic();
+                    });
+                } else {
+                    console.log('⏳ 未检测到预加载，等待用户交互播放音乐');
+                    addUserInteractionForMusic();
+                }
+                
+                function addUserInteractionForMusic() {
                     document.addEventListener('click', function startMusicOnInteraction() {
                         backgroundMusic.play().then(() => {
-                            console.log('🎵 用户交互后音乐开始播放');
+                            console.log('🎵 用户交互后回忆音乐开始播放');
                             document.removeEventListener('click', startMusicOnInteraction);
                         }).catch(e => console.log('音乐播放失败:', e.message));
                     }, { once: true });
-                });
+                }
             } else {
                 console.error('❌ 找不到背景音乐元素');
             }
@@ -529,7 +541,7 @@
                 '第一次去动物园 🦁🐾',
                 '第一次远行 ✈️🌟',
                 '烤匠桌上～ 🍖😋',
-                '都江堰旁 🏔️💧',
+                '都江堰旁 🐼💦',
                 '榴莲大舌头！ 👅🤤'
             ];
             

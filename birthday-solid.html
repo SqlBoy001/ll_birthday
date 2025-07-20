@@ -604,12 +604,12 @@
             function startBackgroundMusic() {
                 if (!elements.backgroundMusic) return;
                 
-                // 检查是否有第一页预加载状态
-                const isPage1Loaded = localStorage.getItem('birthdayPage1Loaded') === 'true';
+                // 检查是否有第一阶段预加载状态
+                const isStageOneLoaded = localStorage.getItem('birthdayStageOneLoaded') === 'true';
                 
-                if (isPage1Loaded) {
-                    console.log('🚀 检测到快速预加载状态，即时播放生日音乐');
-                    // 预加载完成，立即播放
+                if (isStageOneLoaded) {
+                    console.log('🚀 检测到第一阶段预加载完成，即时播放音乐');
+                    // 第一阶段预加载完成，立即播放
                     elements.backgroundMusic.play().then(() => {
                         console.log('🎵 预加载生日音乐立即开始播放');
                         removeMusicPrompt();
@@ -624,79 +624,60 @@
                 }
             }
 
-            // 启动后台预加载后续页面资源
-            function startBackgroundPreloading() {
-                // 检查是否已经预加载了回忆页面
-                const memoryLoaded = localStorage.getItem('memoryPageLoaded') === 'true';
-                if (memoryLoaded) {
-                    console.log('✅ 回忆页面资源已缓存');
+            // 在后台预加载第二阶段资源（回忆页面需要的）
+            function preloadStageTwo() {
+                // 检查是否已经加载过第二阶段
+                if (localStorage.getItem('birthdayStageTwo') === 'true') {
+                    console.log('✅ 第二阶段资源已缓存');
                     return;
                 }
 
-                console.log('🔄 在生日页面启动后台预加载回忆页面资源...');
+                console.log('🔄 开始后台预加载第二阶段资源 (回忆页面)...');
                 
-                // 预加载回忆页面的图片
-                const memoryImages = [
-                    'memory1.jpg', 'memory2.jpg', 'memory3.jpg', 'memory4.jpg',
-                    'memory5.jpg', 'memory6.jpg', 'memory7.jpg', 'memory8.jpg'
+                const stageTwo = [
+                    'assets/images/memories/memory1.jpg',
+                    'assets/images/memories/memory2.jpg',
+                    'assets/images/memories/memory3.jpg',
+                    'assets/images/memories/memory4.jpg',
+                    'assets/images/memories/memory5.jpg',
+                    'assets/images/memories/memory6.jpg',
+                    'assets/images/memories/memory7.jpg',
+                    'assets/images/memories/memory8.jpg',
+                    'assets/audio/birthday-song.mp3'
                 ];
-                
-                let loadedCount = 0;
-                const totalImages = memoryImages.length;
-                
-                memoryImages.forEach((imageName, index) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        loadedCount++;
-                        console.log(`📸 后台预加载回忆图片 ${index + 1}/${totalImages}: ${imageName}`);
-                        if (loadedCount === totalImages) {
-                            console.log('✅ 回忆页面资源后台预加载完成');
-                            localStorage.setItem('memoryPageLoaded', 'true');
-                            // 开始预加载抽奖页面音频
-                            preloadLotteryAudio();
-                        }
-                    };
-                    img.onerror = () => {
-                        loadedCount++;
-                        console.warn(`⚠️ 回忆图片预加载失败: ${imageName}`);
-                        if (loadedCount === totalImages) {
-                            localStorage.setItem('memoryPageLoaded', 'true');
-                            preloadLotteryAudio();
-                        }
-                    };
-                    img.src = `assets/images/memories/${imageName}`;
-                });
-            }
 
-            function preloadLotteryAudio() {
-                const lotteryLoaded = localStorage.getItem('lotteryPageLoaded') === 'true';
-                if (lotteryLoaded) {
-                    console.log('✅ 抽奖页面资源已缓存');
-                    return;
-                }
+                let loaded = 0;
+                const total = stageTwo.length;
 
-                console.log('🎵 开始后台预加载抽奖页面音频...');
-                
-                const audio1 = new Audio('assets/audio/birthday-song.mp3');
-                const audio2 = new Audio('assets/audio/lottery.mp3');
-                
-                let audioLoadedCount = 0;
-                const totalAudio = 2;
-                
-                const onAudioLoad = () => {
-                    audioLoadedCount++;
-                    if (audioLoadedCount === totalAudio) {
-                        console.log('✅ 抽奖页面音频后台预加载完成');
-                        localStorage.setItem('lotteryPageLoaded', 'true');
-                        localStorage.setItem('allResourcesLoaded', 'true');
-                        console.log('🎉 所有页面资源后台预加载完成！');
+                stageTwo.forEach((src, index) => {
+                    if (src.endsWith('.jpg')) {
+                        const img = new Image();
+                        img.onload = img.onerror = () => {
+                            loaded++;
+                            const progress = Math.round((loaded / total) * 100);
+                            console.log(`📸 Stage 2: ${progress}% (${loaded}/${total})`);
+                            
+                            if (loaded === total) {
+                                localStorage.setItem('birthdayStageTwo', 'true');
+                                console.log('✅ 第二阶段预加载完成 (回忆页面资源)');
+                            }
+                        };
+                        img.src = src;
+                    } else if (src.endsWith('.mp3')) {
+                        const audio = new Audio();
+                        audio.oncanplaythrough = audio.onerror = () => {
+                            loaded++;
+                            const progress = Math.round((loaded / total) * 100);
+                            console.log(`🎵 Stage 2: ${progress}% (${loaded}/${total})`);
+                            
+                            if (loaded === total) {
+                                localStorage.setItem('birthdayStageTwo', 'true');
+                                console.log('✅ 第二阶段预加载完成 (回忆页面资源)');
+                            }
+                        };
+                        audio.src = src;
                     }
-                };
-                
-                audio1.addEventListener('canplaythrough', onAudioLoad);
-                audio2.addEventListener('canplaythrough', onAudioLoad);
-                audio1.addEventListener('error', onAudioLoad);
-                audio2.addEventListener('error', onAudioLoad);
+                });
             }
 
             function showMusicClickPrompt() {
@@ -1297,12 +1278,12 @@
 
             // 移动端提示已删除，预加载解决了资源加载问题
 
-            // 启动后台预加载其他页面资源
-            setTimeout(() => {
-                startBackgroundPreloading();
-            }, 2000); // 等2秒让页面稳定后开始后台预加载
-
             // 导航功能已移除
+
+            // 延迟启动第二阶段预加载，让用户先享受当前页面
+            setTimeout(() => {
+                preloadStageTwo();
+            }, 3000); // 3秒后开始后台预加载下一页面资源
 
             console.log('🎉 菱菱生日祝福页面初始化完成！');
         });

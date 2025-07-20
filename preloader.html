@@ -147,13 +147,13 @@
     
     <div class="loader-container">
         <h1 class="title">🎂 菱菱生日祝福</h1>
-        <p class="subtitle">正在准备生日页面，马上就好...</p>
+        <p class="subtitle">正在为你准备生日惊喜...</p>
         
         <div class="progress-container">
             <div class="progress-bar" id="progressBar"></div>
         </div>
         
-        <div class="progress-text" id="progressText">正在加载生日页面... 0%</div>
+        <div class="progress-text" id="progressText">正在加载核心资源... 0%</div>
         
         <div class="loading-hearts">
             <span class="heart">💕</span>
@@ -162,7 +162,7 @@
         </div>
     </div>
 
-    <!-- 隐藏的预加载资源 - 只加载第一个页面的核心资源 -->
+    <!-- 隐藏的预加载资源 - 只加载第一个页面需要的 -->
     <div class="hidden">
         <img id="cakeGif" src="assets/images/birthday-cake.gif" alt="生日蛋糕">
         
@@ -172,7 +172,7 @@
     </div>
 
     <script>
-        class FastPreloader {
+        class StageOnePreloader {
             constructor() {
                 this.progress = 0;
                 this.loadedCount = 0;
@@ -186,43 +186,52 @@
 
             init() {
                 this.createParticles();
-                this.collectCoreResources();
+                this.collectStageOneResources();
                 this.startLoading();
             }
 
             createParticles() {
                 const particlesContainer = document.getElementById('particles');
-                for (let i = 0; i < 15; i++) {
+                for (let i = 0; i < 20; i++) {
                     const particle = document.createElement('div');
                     particle.className = 'particle';
                     particle.style.left = Math.random() * 100 + '%';
-                    particle.style.width = particle.style.height = (Math.random() * 4 + 2) + 'px';
+                    particle.style.width = particle.style.height = (Math.random() * 6 + 2) + 'px';
                     particle.style.animationDelay = Math.random() * 3 + 's';
-                    particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    particle.style.animationDuration = (Math.random() * 3 + 2) + 's';
                     particlesContainer.appendChild(particle);
                 }
             }
 
-            collectCoreResources() {
-                // 只收集第一个页面的核心资源
-                const coreResources = [
-                    { id: 'cakeGif', type: 'image', name: '生日蛋糕' },
-                    { id: 'happyBirthdayAudio', type: 'audio', name: '生日歌' }
+            collectStageOneResources() {
+                // 第一阶段：只加载生日页面核心资源
+                const stageOneElements = [
+                    'cakeGif',           // 生日蛋糕GIF (关键视觉元素)
+                    'happyBirthdayAudio' // 生日歌音频 (核心音乐)
                 ];
 
-                coreResources.forEach(resource => {
-                    const element = document.getElementById(resource.id);
+                stageOneElements.forEach(id => {
+                    const element = document.getElementById(id);
                     if (element) {
+                        const resourceType = element.tagName.toLowerCase() === 'img' ? 'image' : 'audio';
                         this.resources.push({
-                            type: resource.type,
+                            type: resourceType,
                             element: element,
-                            name: resource.name
+                            name: this.getResourceDisplayName(id)
                         });
                     }
                 });
 
                 this.totalResources = this.resources.length;
-                console.log(`🚀 快速预加载：找到 ${this.totalResources} 个核心资源`);
+                console.log(`🚀 Stage 1: 找到 ${this.totalResources} 个核心资源需要预加载`);
+            }
+
+            getResourceDisplayName(id) {
+                const nameMap = {
+                    'cakeGif': '🎂 生日蛋糕动画',
+                    'happyBirthdayAudio': '🎵 生日快乐歌'
+                };
+                return nameMap[id] || id;
             }
 
             startLoading() {
@@ -233,12 +242,12 @@
                         const onLoad = () => {
                             this.loadedCount++;
                             this.updateProgress(resource.name);
-                            console.log(`✅ 核心资源已加载: ${resource.name} (${this.loadedCount}/${this.totalResources})`);
+                            console.log(`✅ Stage 1 已加载: ${resource.name} (${this.loadedCount}/${this.totalResources})`);
                             resolve();
                         };
 
                         const onError = (error) => {
-                            console.warn(`⚠️ 核心资源加载失败: ${resource.name}`, error);
+                            console.warn(`⚠️ Stage 1 加载失败: ${resource.name}`, error);
                             this.loadedCount++;
                             this.updateProgress(resource.name + ' (跳过)');
                             resolve(); // 继续加载其他资源
@@ -265,8 +274,8 @@
 
                 Promise.all(promises).then(() => {
                     setTimeout(() => {
-                        this.completeLoading();
-                    }, 300); // 很短的延迟，让用户看到100%
+                        this.completeStageOne();
+                    }, 300); // 稍作延迟，让用户看到100%
                 });
             }
 
@@ -276,115 +285,46 @@
                 this.progressText.textContent = `正在加载 ${resourceName}... ${this.progress}%`;
             }
 
-            completeLoading() {
+            completeStageOne() {
                 this.progressBar.style.width = '100%';
-                this.progressText.textContent = '生日页面准备完成！🎉';
+                this.progressText.textContent = '核心资源加载完成！准备进入生日祝福页面... 🎉';
                 
-                // 保存第一个页面的加载状态
-                localStorage.setItem('birthdayPage1Loaded', 'true');
-                localStorage.setItem('preloadTime', Date.now().toString());
-                
-                // 启动后台预加载后续页面
-                this.startBackgroundPreload();
+                // 保存第一阶段加载状态
+                localStorage.setItem('birthdayStageOneLoaded', 'true');
+                localStorage.setItem('stageOneLoadTime', Date.now().toString());
                 
                 setTimeout(() => {
-                    // 快速跳转到生日祝福页面
+                    // 跳转到生日祝福页面
                     window.location.href = 'birthday-solid.html';
-                }, 800);
-            }
-
-            startBackgroundPreload() {
-                // 在后台开始预加载后续页面的资源
-                console.log('🔄 开始后台预加载回忆页面资源...');
-                this.preloadMemoryPageResources();
-            }
-
-            preloadMemoryPageResources() {
-                // 创建隐藏的图片元素来预加载回忆页面
-                const memoryImages = [
-                    'memory1.jpg', 'memory2.jpg', 'memory3.jpg', 'memory4.jpg',
-                    'memory5.jpg', 'memory6.jpg', 'memory7.jpg', 'memory8.jpg'
-                ];
-                
-                let loadedMemoryCount = 0;
-                const totalMemoryImages = memoryImages.length;
-                
-                memoryImages.forEach((imageName, index) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        loadedMemoryCount++;
-                        console.log(`📸 后台加载回忆图片 ${index + 1}/${totalMemoryImages}: ${imageName}`);
-                        if (loadedMemoryCount === totalMemoryImages) {
-                            console.log('✅ 回忆页面资源后台加载完成');
-                            localStorage.setItem('memoryPageLoaded', 'true');
-                            // 开始预加载抽奖页面音频
-                            this.preloadLotteryAudio();
-                        }
-                    };
-                    img.onerror = () => {
-                        loadedMemoryCount++;
-                        console.warn(`⚠️ 回忆图片加载失败: ${imageName}`);
-                        if (loadedMemoryCount === totalMemoryImages) {
-                            localStorage.setItem('memoryPageLoaded', 'true');
-                            this.preloadLotteryAudio();
-                        }
-                    };
-                    img.src = `assets/images/memories/${imageName}`;
-                });
-            }
-
-            preloadLotteryAudio() {
-                // 预加载抽奖页面的音频
-                const audio1 = new Audio('assets/audio/birthday-song.mp3');
-                const audio2 = new Audio('assets/audio/lottery.mp3');
-                
-                let audioLoadedCount = 0;
-                const totalAudio = 2;
-                
-                const onAudioLoad = () => {
-                    audioLoadedCount++;
-                    if (audioLoadedCount === totalAudio) {
-                        console.log('✅ 抽奖页面音频后台加载完成');
-                        localStorage.setItem('lotteryPageLoaded', 'true');
-                        localStorage.setItem('allResourcesLoaded', 'true');
-                        console.log('🎉 所有页面资源后台预加载完成！');
-                    }
-                };
-                
-                audio1.addEventListener('canplaythrough', onAudioLoad);
-                audio2.addEventListener('canplaythrough', onAudioLoad);
-                audio1.addEventListener('error', onAudioLoad);
-                audio2.addEventListener('error', onAudioLoad);
-                
-                console.log('🎵 开始后台加载抽奖页面音频...');
+                }, 1000);
             }
         }
 
-        // 检查是否需要预加载
-        function checkNeedPreload() {
-            const lastPreload = localStorage.getItem('preloadTime');
+        // 检查是否需要预加载第一阶段
+        function checkNeedStageOnePreload() {
+            const lastPreload = localStorage.getItem('stageOneLoadTime');
             const now = Date.now();
             
-            // 如果超过30分钟，重新预加载
+            // 如果超过30分钟，重新预加载第一阶段
             if (!lastPreload || (now - parseInt(lastPreload)) > 1800000) {
                 return true;
             }
             
-            return !localStorage.getItem('birthdayPage1Loaded');
+            return !localStorage.getItem('birthdayStageOneLoaded');
         }
 
-        // 启动快速预加载器
-        if (checkNeedPreload()) {
-            console.log('🚀 开始快速预加载核心资源...');
-            new FastPreloader();
+        // 启动第一阶段预加载器
+        if (checkNeedStageOnePreload()) {
+            console.log('🚀 开始第一阶段预加载 (核心资源)...');
+            new StageOnePreloader();
         } else {
-            console.log('✅ 核心资源已缓存，直接跳转');
-            document.querySelector('.subtitle').textContent = '生日页面已准备就绪，即将进入...';
+            console.log('✅ 第一阶段资源已缓存，直接跳转');
+            document.querySelector('.subtitle').textContent = '核心资源已准备就绪，即将进入...';
             document.querySelector('.progress-bar').style.width = '100%';
             document.querySelector('.progress-text').textContent = '准备完成！🎉';
             setTimeout(() => {
                 window.location.href = 'birthday-solid.html';
-            }, 500);
+            }, 800);
         }
     </script>
 </body>

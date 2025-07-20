@@ -445,13 +445,12 @@
             if (backgroundMusic) {
                 backgroundMusic.volume = 0.4; // 设置音量为40%
                 
-                // 检查预加载状态（使用分层加载状态）
-                const isPage1Loaded = localStorage.getItem('birthdayPage1Loaded') === 'true';
-                const isMemoryLoaded = localStorage.getItem('memoryPageLoaded') === 'true';
+                // 检查第二阶段预加载状态
+                const isStageTwoLoaded = localStorage.getItem('birthdayStageTwo') === 'true';
                 
-                if (isPage1Loaded || isMemoryLoaded) {
-                    console.log('🚀 检测到预加载状态，立即播放回忆音乐');
-                    // 预加载完成，立即播放
+                if (isStageTwoLoaded) {
+                    console.log('🚀 检测到第二阶段预加载完成，立即播放回忆音乐');
+                    // 第二阶段预加载完成，立即播放
                     backgroundMusic.play().then(() => {
                         console.log('🎵 预加载回忆音乐立即开始播放');
                     }).catch(e => {
@@ -459,7 +458,7 @@
                         addUserInteractionForMusic();
                     });
                 } else {
-                    console.log('⏳ 未检测到预加载，等待用户交互播放音乐');
+                    console.log('⏳ 未检测到第二阶段预加载，等待用户交互播放音乐');
                     addUserInteractionForMusic();
                 }
                 
@@ -471,9 +470,47 @@
                         }).catch(e => console.log('音乐播放失败:', e.message));
                     }, { once: true });
                 }
+                
+                // 启动第三阶段预加载
+                setTimeout(() => {
+                    preloadStageThree();
+                }, 2000); // 2秒后开始预加载抽奖页面资源
             } else {
                 console.error('❌ 找不到背景音乐元素');
             }
+        }
+
+        // 在后台预加载第三阶段资源（抽奖页面需要的）
+        function preloadStageThree() {
+            // 检查是否已经加载过第三阶段
+            if (localStorage.getItem('birthdayStageThree') === 'true') {
+                console.log('✅ 第三阶段资源已缓存');
+                return;
+            }
+
+            console.log('🔄 开始后台预加载第三阶段资源 (抽奖页面)...');
+            
+            const stageThree = [
+                'assets/audio/lottery.mp3'
+            ];
+
+            let loaded = 0;
+            const total = stageThree.length;
+
+            stageThree.forEach((src, index) => {
+                const audio = new Audio();
+                audio.oncanplaythrough = audio.onerror = () => {
+                    loaded++;
+                    const progress = Math.round((loaded / total) * 100);
+                    console.log(`🎁 Stage 3: ${progress}% (${loaded}/${total})`);
+                    
+                    if (loaded === total) {
+                        localStorage.setItem('birthdayStageThree', 'true');
+                        console.log('✅ 第三阶段预加载完成 (抽奖页面资源)');
+                    }
+                };
+                audio.src = src;
+            });
         }
 
         // toggleBackgroundMusic函数已移至全局作用域

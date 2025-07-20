@@ -494,13 +494,12 @@
             backgroundMusic = document.getElementById('background-music');
             backgroundMusic.volume = 0.4; // 设置音量为40%
             
-            // 检查预加载状态（使用分层加载状态）
-            const isPage1Loaded = localStorage.getItem('birthdayPage1Loaded') === 'true';
-            const isLotteryLoaded = localStorage.getItem('lotteryPageLoaded') === 'true';
+            // 检查第三阶段预加载状态
+            const isStageThreeLoaded = localStorage.getItem('birthdayStageThree') === 'true';
             
-            if (isPage1Loaded || isLotteryLoaded) {
-                console.log('🚀 检测到预加载状态，立即播放抽奖背景音乐');
-                // 预加载完成，立即播放
+            if (isStageThreeLoaded) {
+                console.log('🚀 检测到第三阶段预加载完成，立即播放抽奖背景音乐');
+                // 第三阶段预加载完成，立即播放
                 backgroundMusic.play().then(() => {
                     console.log('🎵 预加载抽奖音乐立即开始播放');
                 }).catch(e => {
@@ -508,7 +507,7 @@
                     addUserInteractionForMusic();
                 });
             } else {
-                console.log('⏳ 未检测到预加载，等待用户交互播放抽奖音乐');
+                console.log('⏳ 未检测到第三阶段预加载，等待用户交互播放抽奖音乐');
                 addUserInteractionForMusic();
             }
             

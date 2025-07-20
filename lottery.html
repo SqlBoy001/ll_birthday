@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菱菱的专属抽奖</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: linear-gradient(135deg, #FF69B4, #FFD700, #FF69B4);
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* 背景动画 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="20" font-size="20">🎉</text></svg>') repeat;
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+            pointer-events: none;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+        
+        .lottery-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .page-title {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            0% { text-shadow: 3px 3px 6px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.5); }
+            100% { text-shadow: 3px 3px 6px rgba(0,0,0,0.3), 0 0 40px rgba(255,255,255,0.8); }
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+        
+        /* 转盘区域 */
+        .lottery-wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 3rem;
+            animation: slideInUp 1s ease;
+        }
+        
+        .lottery-wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                #FF69B4 0deg 60deg,
+                #FFD700 60deg 120deg,
+                #FF1493 120deg 180deg,
+                #FFA500 180deg 240deg,
+                #FF69B4 240deg 300deg,
+                #FFD700 300deg 360deg
+            );
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            transition: transform 3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        
+        .wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 30px solid white;
+            transform: translateX(-50%);
+            z-index: 10;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        
+        .wheel-prizes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .prize-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .prize-1 { transform: translate(-50%, -50%) rotate(30deg) translateY(-80px) rotate(-30deg); }
+        .prize-2 { transform: translate(-50%, -50%) rotate(90deg) translateY(-80px) rotate(-90deg); }
+        .prize-3 { transform: translate(-50%, -50%) rotate(150deg) translateY(-80px) rotate(-150deg); }
+        .prize-4 { transform: translate(-50%, -50%) rotate(210deg) translateY(-80px) rotate(-210deg); }
+        .prize-5 { transform: translate(-50%, -50%) rotate(270deg) translateY(-80px) rotate(-270deg); }
+        .prize-6 { transform: translate(-50%, -50%) rotate(330deg) translateY(-80px) rotate(-330deg); }
+        
+        /* 抽奖按钮 */
+        .spin-button {
+            padding: 1.5rem 3rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FF69B4;
+            background: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .spin-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+        }
+        
+        .spin-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .spin-button.spinning {
+            animation: buttonPulse 0.5s infinite alternate;
+        }
+        
+        @keyframes buttonPulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+        
+        /* 结果显示 */
+        .result-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .result-content {
+            background: white;
+            color: #FF69B4;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            position: relative;
+            animation: modalSlideIn 0.5s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .result-prize {
+            font-size: 2rem;
+            margin: 1rem 0;
+        }
+        
+        .result-message {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+        
+        .close-btn {
+            padding: 1rem 2rem;
+            background: #FF69B4;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: #FF1493;
+            transform: translateY(-2px);
+        }
+        
+        /* 礼品展示 */
+        .prizes-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 2rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+        }
+        
+        .prize-item {
+            background: rgba(255,255,255,0.2);
+            padding: 1rem;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .prize-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .prize-emoji {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .prize-name {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        
+        /* 最终祝福 */
+        .final-blessing {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            opacity: 0;
+            animation: fadeIn 1s ease 2s forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 页面导航按钮 */
+        .page-nav-buttons {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-btn {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(45deg, #FF69B4, #FFB6C1);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.4);
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 105, 180, 0.6);
+        }
+        
+        .nav-btn:active {
+            transform: translateY(0);
+        }
+        
+        .prev-btn {
+            background: linear-gradient(45deg, #87CEEB, #B0E0E6);
+            box-shadow: 0 6px 20px rgba(135, 206, 235, 0.4);
+        }
+        
+        .prev-btn:hover {
+            box-shadow: 0 8px 25px rgba(135, 206, 235, 0.6);
+        }
+        
+        /* 黑屏过渡 */
+        .blackout {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+        
+        .blackout.active {
+            opacity: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .page-nav-buttons {
+                bottom: 20px;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.8rem;
+            }
+            
+            .nav-btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 音乐控制 -->
+    <div style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+        <button id="music-toggle" onclick="toggleBackgroundMusic()" style="
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(45deg, #FF69B4, #FFD700);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        " title="音乐开关">🎵</button>
+    </div>
+
+    <div class="lottery-container">
+        <h1 class="page-title">🎁 菱菱专属抽奖</h1>
+        <p class="subtitle">转动幸运转盘，获得专属惊喜礼物！</p>
+        
+        <!-- 转盘 -->
+        <div class="lottery-wheel-container">
+            <div class="wheel-pointer"></div>
+            <div class="lottery-wheel" id="lotteryWheel">
+                <div class="wheel-prizes">
+                    <div class="prize-text prize-1">🟡<br>榴莲</div>
+                    <div class="prize-text prize-2">🍽️<br>晚餐</div>
+                    <div class="prize-text prize-3">💕<br>情趣</div>
+                    <div class="prize-text prize-4">🛁<br>搓背</div>
+                    <div class="prize-text prize-5">🌺<br>鲜花</div>
+                    <div class="prize-text prize-6">✨<br>惊喜</div>
+                </div>
+                <div class="wheel-center">🎯</div>
+            </div>
+        </div>
+        
+        <button class="spin-button" id="spinButton" onclick="spinWheel()">
+            🎲 开始抽奖 🎲
+        </button>
+        
+        <!-- 礼品展示 -->
+        <div class="prizes-display">
+            <div class="prize-item">
+                <div class="prize-emoji">🟡</div>
+                <div class="prize-name">榴莲大礼包</div>
+            </div>
+            <div class="prize-item">
+                <div class="prize-emoji">🍽️</div>
+                <div class="prize-name">约会晚餐</div>
+            </div>
+            <div class="prize-item">
+                <div class="prize-emoji">💕</div>
+                <div class="prize-name">情趣套装</div>
+            </div>
+            <div class="prize-item">
+                <div class="prize-emoji">🛁</div>
+                <div class="prize-name">搓背套餐</div>
+            </div>
+            <div class="prize-item">
+                <div class="prize-emoji">🌺</div>
+                <div class="prize-name">鲜花怒放</div>
+            </div>
+            <div class="prize-item">
+                <div class="prize-emoji">✨</div>
+                <div class="prize-name">神秘惊喜</div>
+            </div>
+        </div>
+        
+        <!-- 最终祝福 -->
+        <div class="final-blessing">
+            <h3 style="margin-bottom: 1rem; font-size: 1.5rem;">🌟 特别的生日祝福 🌟</h3>
+            <p style="font-size: 1.2rem; line-height: 1.8;">
+                愿菱菱的每一个生日都像今天一样特别，<br>
+                愿你的笑容永远灿烂如花，<br>
+                愿所有的美好都如期而至，<br>
+                愿你永远被爱包围！
+            </p>
+            <p style="margin-top: 1.5rem; font-size: 1.1rem; opacity: 0.9;">
+                🎂 生日快乐，我最爱的菱菱！ 🎂
+            </p>
+        </div>
+
+        <!-- 页面导航按钮 -->
+        <div class="page-nav-buttons" id="nav-buttons" style="display: none;">
+            <button class="nav-btn prev-btn" onclick="goToPrevPage()">
+                ← 📸 返回美好回忆
+            </button>
+        </div>
+    </div>
+    
+    <!-- 结果弹窗 -->
+    <div class="result-modal" id="resultModal">
+        <div class="result-content">
+            <h3>🎉 恭喜你抽中了</h3>
+            <div class="result-prize" id="resultPrize"></div>
+            <div class="result-message" id="resultMessage"></div>
+            <button class="close-btn" onclick="closeResult()">收下礼物</button>
+        </div>
+    </div>
+    
+    <!-- 音频元素 -->
+    <!-- 背景音乐 -->
+    <audio id="background-music" preload="auto" loop>
+        <source src="assets/audio/birthday-song.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- 抽奖音效 -->
+    <audio id="lottery-sound" preload="auto">
+        <source src="assets/audio/lottery.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        const wheel = document.getElementById('lotteryWheel');
+        const spinButton = document.getElementById('spinButton');
+        const resultModal = document.getElementById('resultModal');
+        const resultPrize = document.getElementById('resultPrize');
+        const resultMessage = document.getElementById('resultMessage');
+        
+        let isSpinning = false;
+        let hasSpun = false;
+        let backgroundMusic;
+        
+        // 初始化背景音乐
+        function initBackgroundMusic() {
+            backgroundMusic = document.getElementById('background-music');
+            backgroundMusic.volume = 0.4; // 设置音量为40%
+            
+            // 尝试自动播放背景音乐
+            backgroundMusic.play().catch(e => {
+                console.log('背景音乐自动播放失败，等待用户交互:', e.message);
+                // 添加点击事件监听器，用户首次交互后开始播放
+                document.addEventListener('click', function startMusicOnInteraction() {
+                    backgroundMusic.play().then(() => {
+                        console.log('🎵 背景音乐开始播放');
+                        document.removeEventListener('click', startMusicOnInteraction);
+                    }).catch(e => console.log('背景音乐播放失败:', e.message));
+                }, { once: true });
+            });
+        }
+        
+        const prizes = [
+            { name: '🟡 榴莲大礼包', message: '最爱的味道，专属于你的美味盛宴！' },
+            { name: '🍽️ 约会晚餐', message: '浪漫烛光下，与你共享美妙时光！' },
+            { name: '💕 情趣套装', message: '增添生活乐趣，让感情更加甜蜜！' },
+            { name: '🛁 搓背套餐', message: '放松身心，享受贴心的温柔呵护！' },
+            { name: '🌺 鲜花怒放', message: '如花般绚烂，愿你永远美丽绽放！' },
+            { name: '✨ 神秘惊喜', message: '最特别的惊喜留给最特别的你！' }
+        ];
+        
+        function spinWheel() {
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            spinButton.disabled = true;
+            spinButton.classList.add('spinning');
+            spinButton.textContent = '抽奖中...';
+            
+            // 播放抽奖音效
+            playSound('lottery-sound');
+            
+            // 随机选择奖品 (0-5)
+            const prizeIndex = Math.floor(Math.random() * 6);
+            
+            // 计算旋转角度 (每个扇形60度，需要让指针指向对应区域)
+            const baseRotation = 3600; // 基础旋转10圈
+            const prizeAngle = 360 - (prizeIndex * 60 + 30); // 指向奖品中心
+            const finalRotation = baseRotation + prizeAngle;
+            
+            // 应用旋转
+            wheel.style.transform = `rotate(${finalRotation}deg)`;
+            
+            // 3秒后显示结果
+            setTimeout(() => {
+                showResult(prizeIndex);
+                isSpinning = false;
+                hasSpun = true;
+                spinButton.classList.remove('spinning');
+                spinButton.textContent = hasSpun ? '🎁 已完成抽奖' : '🎲 开始抽奖 🎲';
+                
+                if (hasSpun) {
+                    spinButton.style.background = '#ddd';
+                    spinButton.style.color = '#999';
+                }
+                
+                // 获奖时不播放额外音效，保持简洁
+            }, 3000);
+        }
+        
+        function showResult(prizeIndex) {
+            const prize = prizes[prizeIndex];
+            resultPrize.textContent = prize.name;
+            resultMessage.textContent = prize.message;
+            resultModal.style.display = 'flex';
+        }
+        
+        function closeResult() {
+            resultModal.style.display = 'none';
+            
+            // 抽奖结束，5秒后黑屏返回首页
+            setTimeout(() => {
+                startBlackoutAndReturn();
+            }, 5000);
+        }
+
+        function startBlackoutAndReturn() {
+            console.log('🎭 开始黑屏过渡，即将返回首页');
+            
+            // 创建黑屏元素
+            const blackout = document.createElement('div');
+            blackout.className = 'blackout';
+            document.body.appendChild(blackout);
+            
+            // 触发黑屏动画
+            setTimeout(() => {
+                blackout.classList.add('active');
+            }, 100);
+            
+            // 2秒后跳转到首页
+            setTimeout(() => {
+                window.location.href = 'birthday-solid.html';
+            }, 2000);
+        }
+
+        function goToPrevPage() {
+            console.log('📸 返回回忆页面');
+            window.location.href = 'memory-photos.html';
+        }
+        
+        // 切换背景音乐
+        function toggleBackgroundMusic() {
+            const musicToggle = document.getElementById('music-toggle');
+            
+            if (backgroundMusic.paused) {
+                backgroundMusic.play().then(() => {
+                    musicToggle.textContent = '🎵';
+                    musicToggle.style.opacity = '1';
+                    console.log('🎵 背景音乐恢复播放');
+                }).catch(e => console.log('音乐播放失败:', e.message));
+            } else {
+                backgroundMusic.pause();
+                musicToggle.textContent = '🔇';
+                musicToggle.style.opacity = '0.6';
+                console.log('🔇 背景音乐已暂停');
+            }
+        }
+
+        function showNavigationButtons() {
+            const navButtons = document.getElementById('nav-buttons');
+            if (navButtons) {
+                navButtons.style.display = 'flex';
+                console.log('🧭 导航按钮已显示');
+            }
+        }
+        
+        function playSound(soundId) {
+            try {
+                const sound = document.getElementById(soundId);
+                if (sound) {
+                    sound.volume = 0.5; // 提高音效音量
+                    sound.currentTime = 0;
+                    sound.play().catch(e => console.log('音效播放失败:', e.message));
+                    console.log('🔊 播放音效:', soundId);
+                }
+            } catch (e) {
+                console.log('音效不可用:', soundId);
+            }
+        }
+
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎁 抽奖页面加载完成');
+            
+            // 初始化背景音乐
+            initBackgroundMusic();
+            
+            // 点击模态框外部关闭
+            resultModal.addEventListener('click', function(e) {
+                if (e.target === resultModal) {
+                    closeResult();
+                }
+            });
+            
+            // 页面内容呈现完毕后显示导航按钮（4秒后）
+            setTimeout(() => {
+                showNavigationButtons();
+            }, 4000);
+        });
+    </script>
+</body>
+</html> 

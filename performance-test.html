@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菱菱生日网页 - 性能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #FFF8DC;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 2rem 0;
+            padding: 1rem;
+            border: 2px solid #FF69B4;
+            border-radius: 10px;
+        }
+        .test-result {
+            background: #f0f8ff;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.5rem 0;
+        }
+        .good { color: green; }
+        .warning { color: orange; }
+        .bad { color: red; }
+        button {
+            background: #FF69B4;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 0.5rem;
+            font-size: 1rem;
+        }
+        button:hover {
+            background: #FF1493;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎂 菱菱生日网页性能测试中心</h1>
+        
+        <div class="test-section">
+            <h2>📊 页面性能指标</h2>
+            <button onclick="testPagePerformance()">测试页面性能</button>
+            <div id="page-performance" class="test-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🎨 粒子系统性能</h2>
+            <button onclick="testParticlePerformance()">测试粒子性能</button>
+            <div id="particle-performance" class="test-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🎵 音频系统测试</h2>
+            <button onclick="testAudioPerformance()">测试音频功能</button>
+            <div id="audio-performance" class="test-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📱 移动端兼容性</h2>
+            <button onclick="testMobileCompatibility()">测试移动端</button>
+            <div id="mobile-compatibility" class="test-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🌐 浏览器兼容性</h2>
+            <button onclick="testBrowserCompatibility()">测试浏览器</button>
+            <div id="browser-compatibility" class="test-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📈 资源加载测试</h2>
+            <button onclick="testResourceLoading()">测试资源加载</button>
+            <div id="resource-loading" class="test-result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔗 页面导航测试</h2>
+            <button onclick="testPageNavigation()">测试页面跳转</button>
+            <div id="page-navigation" class="test-result"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 页面性能测试
+        function testPagePerformance() {
+            const result = document.getElementById('page-performance');
+            result.innerHTML = '正在测试页面性能...';
+            
+            setTimeout(() => {
+                const navigation = performance.navigation;
+                const timing = performance.timing;
+                
+                const pageLoadTime = timing.loadEventEnd - timing.navigationStart;
+                const domReadyTime = timing.domContentLoadedEventEnd - timing.navigationStart;
+                const firstPaintTime = performance.getEntriesByType('paint')[0]?.startTime || 0;
+                
+                const metrics = [
+                    { name: '页面加载时间', value: `${pageLoadTime}ms`, status: pageLoadTime < 3000 ? 'good' : pageLoadTime < 5000 ? 'warning' : 'bad' },
+                    { name: 'DOM就绪时间', value: `${domReadyTime}ms`, status: domReadyTime < 2000 ? 'good' : domReadyTime < 3000 ? 'warning' : 'bad' },
+                    { name: '首次绘制时间', value: `${Math.round(firstPaintTime)}ms`, status: firstPaintTime < 1500 ? 'good' : firstPaintTime < 2500 ? 'warning' : 'bad' },
+                    { name: '内存使用', value: `${Math.round(performance.memory?.usedJSHeapSize / 1024 / 1024 || 0)}MB`, status: 'good' }
+                ];
+                
+                result.innerHTML = metrics.map(metric => 
+                    `<div class="metric">
+                        <span>${metric.name}:</span>
+                        <span class="${metric.status}">${metric.value}</span>
+                    </div>`
+                ).join('');
+            }, 1000);
+        }
+        
+        // 粒子系统性能测试
+        function testParticlePerformance() {
+            const result = document.getElementById('particle-performance');
+            result.innerHTML = '正在测试粒子系统性能...';
+            
+            setTimeout(() => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 800;
+                canvas.height = 600;
+                const ctx = canvas.getContext('2d');
+                
+                let fps = 0;
+                let frameCount = 0;
+                const startTime = performance.now();
+                
+                function testFrame() {
+                    frameCount++;
+                    const currentTime = performance.now();
+                    const elapsed = currentTime - startTime;
+                    
+                    if (elapsed >= 1000) {
+                        fps = frameCount;
+                        
+                        const metrics = [
+                            { name: '帧率 (FPS)', value: `${fps}`, status: fps >= 30 ? 'good' : fps >= 20 ? 'warning' : 'bad' },
+                            { name: '渲染时间', value: `${Math.round(elapsed / frameCount)}ms/帧`, status: 'good' },
+                            { name: 'Canvas支持', value: ctx ? '✅ 支持' : '❌ 不支持', status: ctx ? 'good' : 'bad' },
+                            { name: '硬件加速', value: ctx?.webkitBackingStorePixelRatio ? '✅ 启用' : '❓ 未知', status: 'good' }
+                        ];
+                        
+                        result.innerHTML = metrics.map(metric => 
+                            `<div class="metric">
+                                <span>${metric.name}:</span>
+                                <span class="${metric.status}">${metric.value}</span>
+                            </div>`
+                        ).join('');
+                        return;
+                    }
+                    
+                    // 模拟粒子绘制
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    for (let i = 0; i < 100; i++) {
+                        ctx.beginPath();
+                        ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, 5, 0, Math.PI * 2);
+                        ctx.fillStyle = '#FF69B4';
+                        ctx.fill();
+                    }
+                    
+                    requestAnimationFrame(testFrame);
+                }
+                
+                testFrame();
+            }, 500);
+        }
+        
+        // 音频系统测试
+        function testAudioPerformance() {
+            const result = document.getElementById('audio-performance');
+            result.innerHTML = '正在测试音频功能...';
+            
+            setTimeout(() => {
+                const audio = document.createElement('audio');
+                const audioContext = window.AudioContext || window.webkitAudioContext;
+                
+                const metrics = [
+                    { name: 'HTML5 Audio', value: audio.canPlayType ? '✅ 支持' : '❌ 不支持', status: audio.canPlayType ? 'good' : 'bad' },
+                    { name: 'MP3支持', value: audio.canPlayType('audio/mpeg') ? '✅ 支持' : '❌ 不支持', status: audio.canPlayType('audio/mpeg') ? 'good' : 'bad' },
+                    { name: 'Web Audio API', value: audioContext ? '✅ 支持' : '❌ 不支持', status: audioContext ? 'good' : 'bad' },
+                    { name: '自动播放策略', value: '🔍 需要用户交互', status: 'warning' }
+                ];
+                
+                result.innerHTML = metrics.map(metric => 
+                    `<div class="metric">
+                        <span>${metric.name}:</span>
+                        <span class="${metric.status}">${metric.value}</span>
+                    </div>`
+                ).join('');
+            }, 800);
+        }
+        
+        // 移动端兼容性测试
+        function testMobileCompatibility() {
+            const result = document.getElementById('mobile-compatibility');
+            result.innerHTML = '正在测试移动端兼容性...';
+            
+            setTimeout(() => {
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                const isTouch = 'ontouchstart' in window;
+                const devicePixelRatio = window.devicePixelRatio || 1;
+                const viewport = window.innerWidth + 'x' + window.innerHeight;
+                
+                const metrics = [
+                    { name: '设备类型', value: isMobile ? '📱 移动设备' : '💻 桌面设备', status: 'good' },
+                    { name: '触摸支持', value: isTouch ? '✅ 支持触摸' : '❌ 不支持触摸', status: isTouch ? 'good' : 'warning' },
+                    { name: '像素密度', value: `${devicePixelRatio}x`, status: devicePixelRatio >= 2 ? 'good' : 'warning' },
+                    { name: '屏幕尺寸', value: viewport, status: 'good' },
+                    { name: '方向支持', value: 'orientation' in window ? '✅ 支持' : '❌ 不支持', status: 'orientation' in window ? 'good' : 'warning' }
+                ];
+                
+                result.innerHTML = metrics.map(metric => 
+                    `<div class="metric">
+                        <span>${metric.name}:</span>
+                        <span class="${metric.status}">${metric.value}</span>
+                    </div>`
+                ).join('');
+            }, 600);
+        }
+        
+        // 浏览器兼容性测试
+        function testBrowserCompatibility() {
+            const result = document.getElementById('browser-compatibility');
+            result.innerHTML = '正在测试浏览器兼容性...';
+            
+            setTimeout(() => {
+                const browser = navigator.userAgent;
+                const features = {
+                    'CSS动画': 'animation' in document.body.style,
+                    'CSS变换': 'transform' in document.body.style,
+                    'CSS渐变': 'background' in document.body.style,
+                    'ES6支持': typeof Symbol !== 'undefined',
+                    'Promise支持': typeof Promise !== 'undefined',
+                    'Fetch API': typeof fetch !== 'undefined',
+                    'Local Storage': typeof localStorage !== 'undefined',
+                    'Session Storage': typeof sessionStorage !== 'undefined'
+                };
+                
+                const browserName = getBrowserName(browser);
+                
+                let featureHtml = `<div class="metric"><span>浏览器:</span><span class="good">${browserName}</span></div>`;
+                
+                for (const [feature, supported] of Object.entries(features)) {
+                    featureHtml += `<div class="metric">
+                        <span>${feature}:</span>
+                        <span class="${supported ? 'good' : 'bad'}">${supported ? '✅ 支持' : '❌ 不支持'}</span>
+                    </div>`;
+                }
+                
+                result.innerHTML = featureHtml;
+            }, 700);
+        }
+        
+        // 资源加载测试
+        function testResourceLoading() {
+            const result = document.getElementById('resource-loading');
+            result.innerHTML = '正在测试资源加载...';
+            
+            setTimeout(() => {
+                const resources = performance.getEntriesByType('resource');
+                const imageResources = resources.filter(r => r.name.includes('.jpg') || r.name.includes('.png') || r.name.includes('.gif'));
+                const audioResources = resources.filter(r => r.name.includes('.mp3') || r.name.includes('.wav'));
+                const cssResources = resources.filter(r => r.name.includes('.css'));
+                const jsResources = resources.filter(r => r.name.includes('.js'));
+                
+                const totalSize = resources.reduce((sum, r) => sum + (r.transferSize || 0), 0);
+                const avgLoadTime = resources.reduce((sum, r) => sum + r.duration, 0) / resources.length;
+                
+                const metrics = [
+                    { name: '总资源数', value: `${resources.length}个`, status: resources.length < 20 ? 'good' : resources.length < 50 ? 'warning' : 'bad' },
+                    { name: '图片资源', value: `${imageResources.length}个`, status: 'good' },
+                    { name: '音频资源', value: `${audioResources.length}个`, status: 'good' },
+                    { name: '样式表', value: `${cssResources.length}个`, status: 'good' },
+                    { name: 'JavaScript', value: `${jsResources.length}个`, status: 'good' },
+                    { name: '总传输大小', value: `${Math.round(totalSize / 1024)}KB`, status: totalSize < 1024 * 1024 ? 'good' : 'warning' },
+                    { name: '平均加载时间', value: `${Math.round(avgLoadTime)}ms`, status: avgLoadTime < 100 ? 'good' : avgLoadTime < 300 ? 'warning' : 'bad' }
+                ];
+                
+                result.innerHTML = metrics.map(metric => 
+                    `<div class="metric">
+                        <span>${metric.name}:</span>
+                        <span class="${metric.status}">${metric.value}</span>
+                    </div>`
+                ).join('');
+            }, 900);
+        }
+        
+        // 页面导航测试
+        function testPageNavigation() {
+            const result = document.getElementById('page-navigation');
+            result.innerHTML = '正在测试页面导航...';
+            
+            setTimeout(() => {
+                const pages = [
+                    { name: '主页面', url: 'birthday-solid.html', status: 'unknown' },
+                    { name: '回忆页面', url: 'memory-photos.html', status: 'unknown' },
+                    { name: '抽奖页面', url: 'lottery.html', status: 'unknown' },
+                    { name: '音乐测试', url: 'music-test.html', status: 'unknown' }
+                ];
+                
+                const testPromises = pages.map(page => {
+                    return fetch(page.url, { method: 'HEAD' })
+                        .then(response => {
+                            page.status = response.ok ? 'good' : 'bad';
+                            page.statusText = response.ok ? '✅ 可访问' : `❌ ${response.status}`;
+                        })
+                        .catch(() => {
+                            page.status = 'bad';
+                            page.statusText = '❌ 无法访问';
+                        });
+                });
+                
+                Promise.all(testPromises).then(() => {
+                    const metrics = pages.map(page => ({
+                        name: page.name,
+                        value: page.statusText,
+                        status: page.status
+                    }));
+                    
+                    result.innerHTML = metrics.map(metric => 
+                        `<div class="metric">
+                            <span>${metric.name}:</span>
+                            <span class="${metric.status}">${metric.value}</span>
+                        </div>`
+                    ).join('');
+                });
+            }, 500);
+        }
+        
+        // 获取浏览器名称
+        function getBrowserName(userAgent) {
+            if (userAgent.includes('Chrome')) return 'Google Chrome';
+            if (userAgent.includes('Firefox')) return 'Mozilla Firefox';
+            if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) return 'Safari';
+            if (userAgent.includes('Edge')) return 'Microsoft Edge';
+            if (userAgent.includes('Opera')) return 'Opera';
+            return '未知浏览器';
+        }
+        
+        // 页面加载完成后显示基本信息
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧪 性能测试页面已加载');
+        });
+    </script>
+</body>
+</html> 

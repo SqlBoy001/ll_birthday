@@ -1,0 +1,908 @@
+/* =============================================================================
+   菱菱生日祝福网页 - 主样式文件
+   作者: 爱你的人
+   创建时间: 2025年
+   描述: 主要样式和布局，温馨浪漫的粉色主题
+   ============================================================================= */
+
+/* CSS自定义属性（变量） */
+:root {
+    /* 主色彩方案 */
+    --primary-pink: #FF69B4;
+    --light-pink: #FFB6C1;
+    --deep-pink: #FF1493;
+    --pastel-pink: #FFC0CB;
+    
+    /* 辅助色彩 */
+    --gold: #FFD700;
+    --light-gold: #FFA500;
+    --warm-gold: #F4A460;
+    
+    /* 背景色彩 */
+    --bg-dark-blue: #1e3c72;
+    --bg-light-blue: #2a5298;
+    --bg-gradient: linear-gradient(135deg, var(--bg-dark-blue) 0%, var(--bg-light-blue) 100%);
+    
+    /* 文字色彩 */
+    --text-white: #FFFFFF;
+    --text-light: #F0F8FF;
+    --text-cream: #FFF8DC;
+    
+    /* 阴影和效果 */
+    --shadow-soft: 0 4px 20px rgba(255, 105, 180, 0.3);
+    --shadow-glow: 0 0 30px rgba(255, 105, 180, 0.5);
+    --shadow-text: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    
+    /* 字体大小 */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+    --font-size-5xl: 3rem;
+    --font-size-6xl: 4rem;
+    
+    /* 间距 */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    --spacing-3xl: 4rem;
+    
+    /* 圆角 */
+    --border-radius-sm: 0.25rem;
+    --border-radius-md: 0.5rem;
+    --border-radius-lg: 1rem;
+    --border-radius-xl: 1.5rem;
+    --border-radius-full: 50%;
+    
+    /* 过渡时间 */
+    --transition-fast: 0.15s;
+    --transition-normal: 0.3s;
+    --transition-slow: 0.5s;
+    
+    /* Z-index层级 */
+    --z-background: -1;
+    --z-content: 1;
+    --z-header: 10;
+    --z-modal: 100;
+    --z-loading: 1000;
+}
+
+/* 基础布局 */
+body {
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-white);
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* 主容器 */
+.main-container {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* ===== 加载屏幕样式 ===== */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity var(--transition-slow), visibility var(--transition-slow);
+
+}
+
+/* 隐藏加载屏幕的状态 */
+.loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* 应急规则：3秒后自动隐藏加载屏幕 */
+@keyframes autoHideLoading {
+    0%, 85% {
+        opacity: 1;
+        visibility: visible;
+    }
+    100% {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.loading-content {
+    text-align: center;
+    max-width: 300px;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 3px solid rgba(255, 105, 180, 0.3);
+    border-top: 3px solid var(--primary-pink);
+    border-radius: var(--border-radius-full);
+    margin: 0 auto var(--spacing-lg);
+    animation: spin 1s linear infinite;
+}
+
+.loading-text {
+    font-size: var(--font-size-lg);
+    color: var(--text-light);
+    margin-bottom: var(--spacing-lg);
+    text-shadow: var(--shadow-text);
+}
+
+.loading-progress {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-pink), var(--light-pink));
+    width: 0%;
+    animation: progressLoad 3s ease-out forwards;
+}
+
+/* ===== 欢迎屏幕样式 ===== */
+.welcome-screen {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-gradient);
+    overflow: hidden;
+}
+
+@keyframes autoShowWelcome {
+    0%, 80% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.welcome-content {
+    text-align: center;
+    z-index: var(--z-content);
+}
+
+.welcome-title {
+    font-size: var(--font-size-4xl);
+    font-weight: 300;
+    margin-bottom: var(--spacing-2xl);
+    line-height: 1.2;
+}
+
+.title-line {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 1s ease-out forwards;
+}
+
+.title-line:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.enter-button {
+    position: relative;
+    padding: var(--spacing-lg) var(--spacing-2xl);
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    color: var(--text-white);
+    background: linear-gradient(45deg, var(--primary-pink), var(--deep-pink));
+    border: none;
+    border-radius: var(--border-radius-xl);
+    cursor: pointer;
+    box-shadow: var(--shadow-soft);
+    transition: all var(--transition-normal);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 1s ease-out 1s forwards;
+}
+
+.enter-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+}
+
+.enter-button:active {
+    transform: translateY(0);
+}
+
+.button-sparkle {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: sparkle 2s infinite;
+}
+
+/* ===== 主要内容区域 ===== */
+.main-content {
+    position: relative;
+    min-height: 100vh;
+    padding: var(--spacing-xl);
+}
+
+/* 背景装饰层 */
+.background-decorations {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: var(--z-background);
+}
+
+.balloons-container,
+.stars-container,
+.confetti-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* 粒子效果画布 */
+.particles-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: var(--z-background);
+}
+
+/* ===== 顶部控制区 ===== */
+.controls-header {
+    position: fixed;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    display: flex;
+    gap: var(--spacing-sm);
+    z-index: var(--z-header);
+}
+
+.control-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--border-radius-full);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-white);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.control-btn:hover {
+    background: rgba(255, 105, 180, 0.3);
+    transform: scale(1.1);
+}
+
+.btn-icon {
+    font-size: var(--font-size-xl);
+}
+
+/* ===== 生日内容区域 ===== */
+.birthday-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* 标题区域 */
+.title-section {
+    margin-bottom: var(--spacing-3xl);
+    padding-top: var(--spacing-2xl);
+}
+
+.main-title {
+    font-size: var(--font-size-6xl);
+    font-weight: 800;
+    margin-bottom: var(--spacing-lg);
+    text-shadow: var(--shadow-text);
+    line-height: 1.1;
+}
+
+.title-word {
+    display: inline-block;
+    color: var(--text-light);
+    margin-right: var(--spacing-md);
+}
+
+.title-name {
+    display: inline-block;
+    color: var(--primary-pink);
+    text-shadow: 0 0 20px rgba(255, 105, 180, 0.8);
+}
+
+.subtitle {
+    font-size: var(--font-size-3xl);
+    font-weight: 600;
+    color: var(--light-pink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-lg);
+}
+
+.birthday-date {
+    color: var(--gold);
+    font-weight: 800;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
+/* 蛋糕区域 */
+.cake-section {
+    margin-bottom: var(--spacing-3xl);
+    padding: var(--spacing-2xl);
+}
+
+.birthday-cake {
+    position: relative;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.cake-instructions {
+    margin-top: var(--spacing-lg);
+    font-size: var(--font-size-sm);
+    color: var(--text-light);
+    opacity: 0.8;
+}
+
+/* 3D蛋糕样式 */
+.cake-3d {
+    position: relative;
+    margin: 0 auto;
+    perspective: 1000px;
+}
+
+.cake-layer {
+    position: relative;
+    margin: 0 auto;
+}
+
+.cake-bottom {
+    width: 200px;
+    height: 80px;
+    margin-bottom: -20px;
+}
+
+.cake-top {
+    width: 120px;
+    height: 60px;
+}
+
+.cake-top {
+    background: linear-gradient(45deg, var(--pastel-pink), var(--light-pink));
+    border-radius: 10px 10px 5px 5px;
+    border: 3px solid var(--primary-pink);
+    box-shadow: var(--shadow-soft);
+    position: relative;
+}
+
+.cake-bottom .cake-top {
+    background: linear-gradient(45deg, var(--light-pink), var(--primary-pink));
+    width: 200px;
+    height: 80px;
+}
+
+.cake-side {
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: linear-gradient(90deg, rgba(255,105,180,0.8), rgba(255,182,193,0.6));
+    border-radius: 0 0 10px 10px;
+}
+
+/* 蜡烛容器 */
+.candles-container {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+}
+
+.candle {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.candle:hover {
+    transform: scale(1.1);
+}
+
+.candle-body {
+    width: 8px;
+    height: 30px;
+    background: linear-gradient(180deg, #FFD700, #FFA500);
+    border-radius: 2px;
+    position: relative;
+}
+
+.candle-flame {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 18px;
+    background: radial-gradient(circle, #FFD700 20%, #FF6B35 60%, #FF4500 100%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    animation: flameFlicker 0.5s infinite alternate;
+}
+
+.candle-flame.hidden {
+    display: none;
+}
+
+/* 蛋糕装饰 */
+.cake-decorations {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 20px;
+}
+
+.decoration {
+    font-size: 1.2rem;
+    animation: bounce 2s infinite;
+}
+
+.decoration:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.decoration:nth-child(3) {
+    animation-delay: 1s;
+}
+
+/* 祝福文字区域 */
+.wishes-section {
+    margin-bottom: var(--spacing-3xl);
+    padding: var(--spacing-xl);
+}
+
+.wishes-text {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.wish-line {
+    font-size: var(--font-size-xl);
+    font-weight: 400;
+    line-height: 1.6;
+    margin-bottom: var(--spacing-lg);
+    color: var(--text-cream);
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.special-wish {
+    font-size: var(--font-size-2xl);
+    font-weight: 600;
+    color: var(--primary-pink);
+    text-shadow: var(--shadow-glow);
+}
+
+/* 游戏区域 */
+.games-section {
+    margin-bottom: var(--spacing-3xl);
+    padding: var(--spacing-xl);
+}
+
+.games-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.game-item {
+    padding: var(--spacing-lg);
+}
+
+.game-trigger {
+    width: 100%;
+    padding: var(--spacing-lg);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-white);
+    background: linear-gradient(45deg, var(--light-pink), var(--primary-pink));
+    border: none;
+    border-radius: var(--border-radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    box-shadow: var(--shadow-soft);
+}
+
+.game-trigger:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-glow);
+}
+
+/* 照片回忆区域 */
+.memories-section {
+    margin-bottom: var(--spacing-3xl);
+    padding: var(--spacing-xl);
+}
+
+.gallery-title {
+    font-size: var(--font-size-2xl);
+    font-weight: 600;
+    margin-bottom: var(--spacing-xl);
+    color: var(--light-pink);
+}
+
+.gallery-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-xl);
+    padding: var(--spacing-xl);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.photo-placeholder {
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: var(--border-radius-lg);
+    color: var(--text-light);
+    font-size: var(--font-size-lg);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.photo-placeholder:hover {
+    border-color: var(--primary-pink);
+    background: rgba(255, 105, 180, 0.1);
+}
+
+/* ===== 音乐播放器 ===== */
+.music-player {
+    position: fixed;
+    bottom: var(--spacing-lg);
+    left: var(--spacing-lg);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-md);
+    z-index: var(--z-header);
+    min-width: 200px;
+}
+
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
+}
+
+.player-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--border-radius-full);
+    background: var(--primary-pink);
+    color: var(--text-white);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-lg);
+}
+
+.player-btn:hover {
+    background: var(--deep-pink);
+    transform: scale(1.1);
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    flex: 1;
+}
+
+.volume-btn {
+    background: none;
+    border: none;
+    color: var(--text-white);
+    cursor: pointer;
+    font-size: var(--font-size-base);
+}
+
+.volume-slider {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: var(--border-radius-sm);
+    outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--primary-pink);
+    border-radius: var(--border-radius-full);
+    cursor: pointer;
+}
+
+.now-playing {
+    font-size: var(--font-size-sm);
+    color: var(--text-light);
+    opacity: 0.8;
+}
+
+/* ===== 背景装饰样式 ===== */
+
+/* 气球样式 */
+.balloon {
+    position: absolute;
+    font-size: 2rem;
+    z-index: var(--z-background);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.balloon:hover {
+    transform: scale(1.2);
+}
+
+/* 星星样式 */
+.star {
+    position: absolute;
+    z-index: var(--z-background);
+    cursor: pointer;
+    filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.8));
+}
+
+.star:hover {
+    animation: starPulse 0.5s ease-in-out;
+}
+
+/* 彩带样式 */
+.confetti {
+    position: absolute;
+    z-index: var(--z-background);
+    border-radius: 2px;
+    will-change: transform;
+}
+
+/* 欢迎屏幕装饰心形 */
+.floating-heart {
+    position: absolute;
+    z-index: var(--z-content);
+    pointer-events: none;
+    will-change: transform;
+}
+
+/* 心形飘动动画 */
+@keyframes heartFloat {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.7;
+    }
+    25% {
+        transform: translateY(-20px) rotate(5deg);
+        opacity: 1;
+    }
+    50% {
+        transform: translateY(-10px) rotate(-5deg);
+        opacity: 0.8;
+    }
+    75% {
+        transform: translateY(-15px) rotate(2deg);
+        opacity: 0.9;
+    }
+}
+
+/* 气球飘动的关键帧补充 */
+@keyframes balloonBounce {
+    0%, 100% {
+        transform: translateY(0) rotate(-1deg);
+    }
+    50% {
+        transform: translateY(-15px) rotate(1deg);
+    }
+}
+
+/* 不同类型的气球颜色 */
+.balloon.pink {
+    color: var(--primary-pink);
+    text-shadow: 0 0 10px rgba(255, 105, 180, 0.6);
+}
+
+.balloon.gold {
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+.balloon.blue {
+    color: #87CEEB;
+    text-shadow: 0 0 10px rgba(135, 206, 235, 0.6);
+}
+
+.balloon.purple {
+    color: #DDA0DD;
+    text-shadow: 0 0 10px rgba(221, 160, 221, 0.6);
+}
+
+.balloon.red {
+    color: #FF6B6B;
+    text-shadow: 0 0 10px rgba(255, 107, 107, 0.6);
+}
+
+/* 不同大小的星星 */
+.star.small {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.star.medium {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+.star.large {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+/* 彩带颜色变体 */
+.confetti.pink {
+    background: linear-gradient(45deg, var(--primary-pink), var(--light-pink));
+}
+
+.confetti.gold {
+    background: linear-gradient(45deg, var(--gold), var(--light-gold));
+}
+
+.confetti.blue {
+    background: linear-gradient(45deg, #87CEEB, #B0E0E6);
+}
+
+.confetti.purple {
+    background: linear-gradient(45deg, #DDA0DD, #E6E6FA);
+}
+
+.confetti.red {
+    background: linear-gradient(45deg, #FF6B6B, #FFA07A);
+}
+
+/* 灯光关闭效果 */
+.lights-off {
+    background: linear-gradient(135deg, #0a1428 0%, #1a2947 100%);
+}
+
+.lights-off .balloon,
+.lights-off .star {
+    opacity: 0.3;
+    filter: grayscale(0.7);
+}
+
+.lights-off .main-title,
+.lights-off .subtitle,
+.lights-off .wish-line {
+    text-shadow: none;
+    opacity: 0.4;
+}
+
+/* 特殊动画组合 */
+.balloon.animate-special {
+    animation: balloonFloat 4s ease-in-out infinite,
+               balloonBounce 2s ease-in-out infinite;
+}
+
+.star.animate-special {
+    animation: starTwinkle 3s infinite,
+               starPulse 5s infinite;
+}
+
+/* ===== 响应式设计 ===== */
+@media (max-width: 768px) {
+    :root {
+        --font-size-6xl: 2.5rem;
+        --font-size-4xl: 1.8rem;
+        --font-size-3xl: 1.5rem;
+        --spacing-xl: 1rem;
+        --spacing-2xl: 1.5rem;
+        --spacing-3xl: 2rem;
+    }
+    
+    .main-content {
+        padding: var(--spacing-md);
+    }
+    
+    .controls-header {
+        top: var(--spacing-md);
+        right: var(--spacing-md);
+    }
+    
+    .control-btn {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .games-container {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .music-player {
+        bottom: var(--spacing-md);
+        left: var(--spacing-md);
+        right: var(--spacing-md);
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .welcome-title {
+        font-size: var(--font-size-3xl);
+    }
+    
+    .enter-button {
+        padding: var(--spacing-md) var(--spacing-xl);
+        font-size: var(--font-size-lg);
+    }
+    
+    .main-title {
+        font-size: var(--font-size-4xl);
+    }
+    
+    .subtitle {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+} 

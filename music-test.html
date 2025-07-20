@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐播放测试</title>
+    <style>
+        body {
+            background: #FFF8DC;
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+            text-align: center;
+        }
+        .test-btn {
+            padding: 1rem 2rem;
+            margin: 1rem;
+            background: #FF69B4;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .status {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎵 音乐播放测试</h1>
+    
+    <div class="status" id="status">等待测试...</div>
+    
+    <button class="test-btn" onclick="testAutoplay()">测试自动播放</button>
+    <button class="test-btn" onclick="testManualPlay()">手动播放</button>
+    <button class="test-btn" onclick="pauseMusic()">暂停音乐</button>
+    <button class="test-btn" onclick="checkAudioFile()">检查音频文件</button>
+    
+    <audio id="test-audio" preload="auto" loop>
+        <source src="assets/audio/happy-birthday.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        const audio = document.getElementById('test-audio');
+        const status = document.getElementById('status');
+        
+        function updateStatus(message) {
+            status.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            console.log(message);
+        }
+        
+        function testAutoplay() {
+            updateStatus('尝试自动播放...');
+            audio.play().then(() => {
+                updateStatus('✅ 自动播放成功！音乐正在播放');
+            }).catch(e => {
+                updateStatus('❌ 自动播放失败: ' + e.message);
+            });
+        }
+        
+        function testManualPlay() {
+            updateStatus('手动播放音乐...');
+            audio.play().then(() => {
+                updateStatus('✅ 手动播放成功！音乐正在播放');
+            }).catch(e => {
+                updateStatus('❌ 手动播放失败: ' + e.message);
+            });
+        }
+        
+        function pauseMusic() {
+            audio.pause();
+            updateStatus('⏸️ 音乐已暂停');
+        }
+        
+        function checkAudioFile() {
+            updateStatus('检查音频文件...');
+            
+            // 检查音频文件是否可以加载
+            const testAudio = new Audio('assets/audio/happy-birthday.mp3');
+            testAudio.addEventListener('loadeddata', () => {
+                updateStatus(`✅ 音频文件加载成功！文件时长: ${Math.round(testAudio.duration)}秒`);
+            });
+            testAudio.addEventListener('error', (e) => {
+                updateStatus('❌ 音频文件加载失败: ' + e.message);
+            });
+            testAudio.load();
+        }
+        
+        // 音频事件监听
+        audio.addEventListener('loadstart', () => updateStatus('🔄 开始加载音频...'));
+        audio.addEventListener('loadeddata', () => updateStatus('📁 音频数据加载完成'));
+        audio.addEventListener('canplay', () => updateStatus('▶️ 音频准备就绪，可以播放'));
+        audio.addEventListener('play', () => updateStatus('🎵 音频开始播放'));
+        audio.addEventListener('pause', () => updateStatus('⏸️ 音频暂停'));
+        audio.addEventListener('ended', () => updateStatus('🔚 音频播放结束'));
+        audio.addEventListener('error', (e) => updateStatus('❌ 音频错误: ' + e.message));
+        
+        // 页面加载完成后自动检查
+        window.addEventListener('load', () => {
+            updateStatus('页面加载完成，开始音频检查');
+            checkAudioFile();
+        });
+    </script>
+</body>
+</html> 

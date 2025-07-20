@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菱菱的美好回忆</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: linear-gradient(135deg, #FFE4E1, #FFF8DC);
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #8B4513;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        .memory-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .page-title {
+            font-size: 3rem;
+            color: #FF69B4;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: fadeInDown 1s ease;
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #FF1493;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease 0.5s backwards;
+        }
+        
+        /* 照片轮播区域 */
+        .photos-carousel {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            background: white;
+            border-radius: 20px;
+            padding: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: slideInUp 1s ease 1s backwards;
+        }
+        
+        .photo-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+        
+        .photo-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            font-size: 4rem;
+        }
+        
+        .photo-slide.active {
+            opacity: 1;
+        }
+        
+        .photo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        
+        .photo-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 1rem;
+            font-size: 1.1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .photo-slide.active .photo-caption {
+            transform: translateY(0);
+        }
+        
+        /* 轮播控制 */
+        .carousel-controls {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: #FF69B4;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover {
+            background: #FF1493;
+            transform: scale(1.1);
+        }
+        
+        .indicators {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 105, 180, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .indicator.active {
+            background: #FF69B4;
+            transform: scale(1.2);
+        }
+        
+        /* 回忆文字 */
+        .memory-text {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 2rem 0;
+            font-size: 1.2rem;
+            line-height: 2;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            animation: fadeIn 1s ease 2s backwards;
+        }
+        
+        .memory-text p {
+            margin: 1rem 0;
+            opacity: 0;
+            animation: slideInLeft 0.8s ease forwards;
+        }
+        
+        .memory-text p:nth-child(1) { animation-delay: 2.5s; }
+        .memory-text p:nth-child(2) { animation-delay: 3s; }
+        .memory-text p:nth-child(3) { animation-delay: 3.5s; }
+        .memory-text p:nth-child(4) { animation-delay: 4s; }
+        
+        /* 前往抽奖按钮 */
+        .next-section {
+            margin-top: 3rem;
+            animation: bounceIn 1s ease 4.5s backwards;
+        }
+        
+        .lottery-btn {
+            padding: 1.5rem 3rem;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(45deg, #FF69B4, #FFD700);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255, 105, 180, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .lottery-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(255, 105, 180, 0.6);
+        }
+        
+        .lottery-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .lottery-btn:hover::before {
+            left: 100%;
+        }
+        
+        /* 动画定义 */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(100px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 页面导航按钮 */
+        .page-nav-buttons {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .nav-btn {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(45deg, #FF69B4, #FFB6C1);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.4);
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 105, 180, 0.6);
+        }
+        
+        .nav-btn:active {
+            transform: translateY(0);
+        }
+        
+        .prev-btn {
+            background: linear-gradient(45deg, #87CEEB, #B0E0E6);
+            box-shadow: 0 6px 20px rgba(135, 206, 235, 0.4);
+        }
+        
+        .prev-btn:hover {
+            box-shadow: 0 8px 25px rgba(135, 206, 235, 0.6);
+        }
+        
+        @media (max-width: 768px) {
+            .page-nav-buttons {
+                bottom: 20px;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.8rem;
+            }
+            
+            .nav-btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+                min-width: 120px;
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.5); }
+            60% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+
+    </style>
+</head>
+<body>
+    <!-- 音乐控制 -->
+    <div style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+        <button id="music-toggle" onclick="toggleBackgroundMusic()" style="
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(45deg, #FF69B4, #FFD700);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        " title="音乐开关">🎵</button>
+    </div>
+
+    <div class="memory-container">
+        <h1 class="page-title">📸 菱菱的美好回忆</h1>
+        <p class="subtitle">每一个瞬间都是最珍贵的回忆</p>
+        
+        <!-- 照片轮播 -->
+        <div class="photos-carousel">
+            <div class="photo-container">
+                <!-- 8张美好回忆照片 -->
+                <div class="photo-slide active">
+                    <div>🌺</div>
+                    <div class="photo-caption">第一次送你的花花</div>
+                </div>
+                <div class="photo-slide">
+                    <div>🤝</div>
+                    <div class="photo-caption">第一次牵手合照</div>
+                </div>
+                <div class="photo-slide">
+                    <div>🐠</div>
+                    <div class="photo-caption">第一次去海洋世界</div>
+                </div>
+                <div class="photo-slide">
+                    <div>🦁</div>
+                    <div class="photo-caption">第一次去动物园</div>
+                </div>
+                <div class="photo-slide">
+                    <div>✈️</div>
+                    <div class="photo-caption">第一次远行</div>
+                </div>
+                <div class="photo-slide">
+                    <div>🍖</div>
+                    <div class="photo-caption">烤匠桌上～</div>
+                </div>
+                <div class="photo-slide">
+                    <div>🏔️</div>
+                    <div class="photo-caption">都江堰旁</div>
+                </div>
+                <div class="photo-slide">
+                    <div>👅</div>
+                    <div class="photo-caption">榴莲大舌头！</div>
+                </div>
+            </div>
+            
+            <div class="carousel-controls">
+                <button class="control-btn" onclick="previousPhoto()">‹</button>
+                <button class="control-btn" onclick="nextPhoto()">›</button>
+            </div>
+            
+            <div class="indicators">
+                <div class="indicator active" onclick="goToSlide(0)"></div>
+                <div class="indicator" onclick="goToSlide(1)"></div>
+                <div class="indicator" onclick="goToSlide(2)"></div>
+                <div class="indicator" onclick="goToSlide(3)"></div>
+                <div class="indicator" onclick="goToSlide(4)"></div>
+                <div class="indicator" onclick="goToSlide(5)"></div>
+                <div class="indicator" onclick="goToSlide(6)"></div>
+                <div class="indicator" onclick="goToSlide(7)"></div>
+            </div>
+        </div>
+        
+        <!-- 回忆文字 -->
+        <div class="memory-text">
+            <p>🌟 时间过得真快，转眼间又是一个美好的生日</p>
+            <p>💖 每一张照片都记录着我们共同度过的温馨时光</p>
+            <p>🎈 感谢你带给我的每一个笑容和美好回忆</p>
+            <p>🌈 愿我们的感情像这些照片一样，永远珍贵美好</p>
+        </div>
+        
+        <!-- 页面导航按钮 -->
+        <div class="page-nav-buttons" id="nav-buttons" style="display: none;">
+            <button class="nav-btn prev-btn" onclick="goToPrevPage()">
+                ← 🎂 返回生日祝福
+            </button>
+            <button class="nav-btn next-btn" onclick="goToNextPage()">
+                🎁 惊喜抽奖 →
+            </button>
+        </div>
+    </div>
+    
+    <!-- 音频元素 -->
+    <audio id="page-music" preload="auto" loop>
+        <source src="assets/audio/birthday-song.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.photo-slide');
+        const indicators = document.querySelectorAll('.indicator');
+        
+        let backgroundMusic;
+        
+        // 全局导航和音乐控制函数
+        function toggleBackgroundMusic() {
+            const musicToggle = document.getElementById('music-toggle');
+            
+            if (!backgroundMusic) {
+                console.error('❌ 背景音乐未初始化');
+                return;
+            }
+            
+            if (backgroundMusic.paused) {
+                backgroundMusic.play().then(() => {
+                    musicToggle.textContent = '🎵';
+                    musicToggle.style.opacity = '1';
+                    console.log('🎵 背景音乐恢复播放');
+                }).catch(e => {
+                    console.log('音乐播放失败:', e.message);
+                    alert('音乐播放失败，请检查音频文件');
+                });
+            } else {
+                backgroundMusic.pause();
+                musicToggle.textContent = '🔇';
+                musicToggle.style.opacity = '0.6';
+                console.log('🔇 背景音乐已暂停');
+            }
+        }
+
+        // 导航函数已移至全局作用域
+        
+        // 初始化背景音乐
+        function initBackgroundMusic() {
+            backgroundMusic = document.getElementById('page-music');
+            if (backgroundMusic) {
+                backgroundMusic.volume = 0.4; // 设置音量为40%
+                
+                // 尝试自动播放背景音乐
+                backgroundMusic.play().then(() => {
+                    console.log('🎵 背景音乐自动播放成功');
+                }).catch(e => {
+                    console.log('🎵 背景音乐自动播放失败，等待用户交互:', e.message);
+                    // 添加点击事件监听器，用户首次交互后开始播放
+                    document.addEventListener('click', function startMusicOnInteraction() {
+                        backgroundMusic.play().then(() => {
+                            console.log('🎵 用户交互后音乐开始播放');
+                            document.removeEventListener('click', startMusicOnInteraction);
+                        }).catch(e => console.log('音乐播放失败:', e.message));
+                    }, { once: true });
+                });
+            } else {
+                console.error('❌ 找不到背景音乐元素');
+            }
+        }
+
+        // toggleBackgroundMusic函数已移至全局作用域
+
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📸 回忆页面加载完成');
+            
+            // 初始化背景音乐
+            initBackgroundMusic();
+            
+            // 自动轮播
+            setInterval(() => {
+                nextPhoto();
+            }, 4000);
+            
+            // 加载真实照片
+            loadMemoryPhotos();
+            
+            // 页面内容呈现完毕后显示导航按钮（6秒后）
+            setTimeout(() => {
+                showNavigationButtons();
+            }, 6000);
+        });
+        
+        function nextPhoto() {
+            slides[currentSlide].classList.remove('active');
+            indicators[currentSlide].classList.remove('active');
+            
+            currentSlide = (currentSlide + 1) % slides.length;
+            
+            slides[currentSlide].classList.add('active');
+            indicators[currentSlide].classList.add('active');
+        }
+        
+        function previousPhoto() {
+            slides[currentSlide].classList.remove('active');
+            indicators[currentSlide].classList.remove('active');
+            
+            currentSlide = currentSlide === 0 ? slides.length - 1 : currentSlide - 1;
+            
+            slides[currentSlide].classList.add('active');
+            indicators[currentSlide].classList.add('active');
+        }
+        
+        function goToSlide(index) {
+            slides[currentSlide].classList.remove('active');
+            indicators[currentSlide].classList.remove('active');
+            
+            currentSlide = index;
+            
+            slides[currentSlide].classList.add('active');
+            indicators[currentSlide].classList.add('active');
+        }
+        
+        function loadMemoryPhotos() {
+            // 尝试加载真实照片
+            const photoFiles = [
+                'memory1.jpg', 'memory2.jpg', 'memory3.jpg', 'memory4.jpg',
+                'memory5.jpg', 'memory6.jpg', 'memory7.jpg', 'memory8.jpg'
+            ];
+            const captions = [
+                '第一次送你的花花 🌺',
+                '第一次牵手合照 🤝💕',
+                '第一次去海洋世界 🐠🌊',
+                '第一次去动物园 🦁🐾',
+                '第一次远行 ✈️🌟',
+                '烤匠桌上～ 🍖😋',
+                '都江堰旁 🏔️💧',
+                '榴莲大舌头！ 👅🤤'
+            ];
+            
+            photoFiles.forEach((filename, index) => {
+                const img = new Image();
+                img.onload = function() {
+                    const slide = slides[index];
+                    slide.innerHTML = `
+                        <img class="photo-img" src="assets/images/memories/${filename}" alt="${captions[index]}">
+                        <div class="photo-caption">${captions[index]}</div>
+                    `;
+                    console.log(`📷 加载照片成功: ${filename}`);
+                };
+                img.onerror = function() {
+                    console.log(`📷 照片不存在: ${filename}`);
+                };
+                img.src = `assets/images/memories/${filename}`;
+            });
+        }
+        
+        function goToPrevPage() {
+            console.log('🎂 返回生日祝福页面');
+            window.location.href = 'birthday-solid.html';
+        }
+
+        function goToNextPage() {
+            console.log('🎁 前往抽奖页面');
+            window.location.href = 'lottery.html';
+        }
+
+        function showNavigationButtons() {
+            const navButtons = document.getElementById('nav-buttons');
+            if (navButtons) {
+                navButtons.style.display = 'flex';
+                console.log('🧭 导航按钮已显示');
+            }
+        }
+    </script>
+</body>
+</html> 

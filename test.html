@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单测试 - 菱菱生日祝福</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .test-container {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            color: #FF69B4;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #FFB6C1;
+            margin-bottom: 2rem;
+        }
+        
+        .test-btn {
+            background: linear-gradient(45deg, #FF69B4, #FF1493);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.6);
+        }
+        
+        .status {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-family: monospace;
+            text-align: left;
+            max-width: 500px;
+        }
+        
+        .balloon {
+            position: absolute;
+            font-size: 2rem;
+            cursor: pointer;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎂 菱菱生日快乐 🎂</h1>
+        <div class="subtitle">7月21日 - 简单测试页面</div>
+        
+        <button class="test-btn" onclick="testCss()">测试CSS样式</button>
+        <button class="test-btn" onclick="testAudio()">测试音频</button>
+        <button class="test-btn" onclick="testBalloons()">测试动画</button>
+        <button class="test-btn" onclick="goToDebug()">进入调试页面</button>
+        <button class="test-btn" onclick="goToMain()">进入主页面</button>
+        
+        <div class="status" id="status">
+            ✅ 简单测试页面已加载<br>
+            📅 当前时间: <span id="time"></span><br>
+            🌐 页面URL: <span id="url"></span><br>
+            📱 用户代理: <span id="ua"></span>
+        </div>
+    </div>
+    
+    <script>
+        // 更新基本信息
+        document.getElementById('time').textContent = new Date().toLocaleString();
+        document.getElementById('url').textContent = window.location.href;
+        document.getElementById('ua').textContent = navigator.userAgent.substring(0, 50) + '...';
+        
+        function updateStatus(message) {
+            const status = document.getElementById('status');
+            status.innerHTML += '<br>⏰ ' + new Date().toLocaleTimeString() + ': ' + message;
+        }
+        
+        function testCss() {
+            updateStatus('🎨 CSS样式测试通过 - 页面正常显示');
+        }
+        
+        function testAudio() {
+            const audio = new Audio('assets/audio/effects/click.mp3');
+            audio.play().then(() => {
+                updateStatus('🎵 音频测试成功');
+            }).catch(error => {
+                updateStatus('❌ 音频测试失败: ' + error.message);
+            });
+        }
+        
+        function testBalloons() {
+            for (let i = 0; i < 3; i++) {
+                createBalloon();
+            }
+            updateStatus('🎈 动画测试 - 创建了3个气球');
+        }
+        
+        function createBalloon() {
+            const balloon = document.createElement('div');
+            balloon.className = 'balloon';
+            balloon.innerHTML = '🎈';
+            balloon.style.left = Math.random() * 80 + 10 + '%';
+            balloon.style.top = Math.random() * 70 + 15 + '%';
+            
+            balloon.addEventListener('click', () => {
+                balloon.style.transform = 'scale(1.5)';
+                balloon.style.opacity = '0';
+                setTimeout(() => balloon.remove(), 300);
+                updateStatus('🎈 气球被点击！');
+            });
+            
+            document.body.appendChild(balloon);
+            setTimeout(() => balloon.remove(), 5000);
+        }
+        
+        function goToDebug() {
+            updateStatus('🔧 跳转到调试页面...');
+            setTimeout(() => window.location.href = 'debug.html', 1000);
+        }
+        
+        function goToMain() {
+            updateStatus('🏠 跳转到主页面...');
+            setTimeout(() => window.location.href = 'index.html', 1000);
+        }
+        
+        // 页面加载完成提示
+        window.addEventListener('load', () => {
+            updateStatus('🎉 测试页面加载完成');
+        });
+    </script>
+</body>
+</html> 

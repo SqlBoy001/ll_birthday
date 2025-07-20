@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>明显渐变测试</title>
+    <meta charset="UTF-8">
+</head>
+<body style="margin:0; padding:0; height:100vh; background:linear-gradient(45deg, red 0%, blue 50%, green 100%); color:white; font-family:Arial; display:flex; align-items:center; justify-content:center;">
+    <div style="text-align:center; padding:2rem; background:rgba(0,0,0,0.7); border-radius:20px;">
+        <h1 style="font-size:3rem; color:yellow;">🌈 超明显渐变测试 🌈</h1>
+        <p style="font-size:1.5rem;">如果背景从红色→蓝色→绿色渐变，说明渐变正常！</p>
+        <p style="font-size:1.2rem; margin-top:2rem;">现在看到的背景颜色：</p>
+        <p style="font-size:1.5rem; color:yellow;">
+            🔴 红色 → 🔵 蓝色 → 🟢 绿色？
+        </p>
+        <button onclick="testSubtleGradient()" style="background:linear-gradient(45deg, purple, orange); color:white; border:none; padding:1rem 2rem; font-size:1.2rem; border-radius:50px; cursor:pointer; margin-top:1rem;">测试菱菱生日渐变</button>
+    </div>
+    
+    <script>
+        function testSubtleGradient() {
+            // 切换到菱菱生日的渐变
+            document.body.style.background = 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)';
+            document.querySelector('h1').textContent = '🎂 菱菱生日渐变 🎂';
+            document.querySelector('p').textContent = '现在应该看到深蓝色到浅蓝色的渐变';
+            setTimeout(() => {
+                alert('这就是菱菱生日页面的渐变背景！');
+            }, 1000);
+        }
+    </script>
+</body>
+</html> 

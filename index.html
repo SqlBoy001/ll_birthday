@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="菱菱的专属生日祝福网页 - 7.21生日快乐">
+    <meta name="keywords" content="生日祝福,菱菱,生日快乐,生日网页">
+    <meta name="author" content="爱你的人">
+    
+    <!-- PWA支持 -->
+    <meta name="theme-color" content="#FF69B4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="菱菱生日快乐">
+    
+    <!-- 预加载关键资源 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <title>亲爱的菱菱，生日快乐！🎂</title>
+    
+    <!-- CSS文件 -->
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    
+    <!-- 网站图标 -->
+    <link rel="icon" href="assets/images/favicon.ico">
+    <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
+</head>
+
+<body>
+    <!-- 加载屏幕 -->
+            <div id="loading-screen" class="loading-screen hidden">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">为菱菱准备惊喜中...</p>
+            <div class="loading-progress">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主容器 -->
+    <main id="main-container" class="main-container hidden">
+        
+        <!-- 页面入口欢迎屏 -->
+        <section id="welcome-screen" class="welcome-screen">
+            <div class="welcome-content">
+                <h1 class="welcome-title">
+                    <span class="title-line">一份特别的礼物</span>
+                    <span class="title-line">等待着你...</span>
+                </h1>
+                <button id="enter-btn" class="enter-button">
+                    <span>点击进入</span>
+                    <div class="button-sparkle"></div>
+                </button>
+            </div>
+            <div class="welcome-decorations">
+                <!-- 装饰元素将通过CSS生成 -->
+            </div>
+        </section>
+
+        <!-- 主要内容区域 -->
+        <section id="main-content" class="main-content hidden">
+            
+            <!-- 背景装饰层 -->
+            <div class="background-decorations">
+                <div id="balloons-container" class="balloons-container"></div>
+                <div id="stars-container" class="stars-container"></div>
+                <div id="confetti-container" class="confetti-container"></div>
+            </div>
+
+            <!-- 粒子效果画布 -->
+            <canvas id="particles-canvas" class="particles-canvas"></canvas>
+
+            <!-- 顶部控制区 -->
+            <header class="controls-header">
+                <button id="lights-toggle" class="control-btn lights-btn" title="开关灯光">
+                    <span class="btn-icon">💡</span>
+                </button>
+                <button id="music-toggle" class="control-btn music-btn" title="音乐开关">
+                    <span class="btn-icon">🎵</span>
+                </button>
+                <button id="effects-toggle" class="control-btn effects-btn" title="特效开关">
+                    <span class="btn-icon">✨</span>
+                </button>
+            </header>
+
+            <!-- 主要祝福内容 -->
+            <div class="birthday-content">
+                
+                <!-- 生日标题区域 -->
+                <section class="title-section">
+                    <h1 id="main-title" class="main-title">
+                        <span class="title-word">亲爱的</span>
+                        <span class="title-name">菱菱</span>
+                    </h1>
+                    <h2 id="subtitle" class="subtitle">
+                        <span class="subtitle-text">生日快乐</span>
+                        <span class="birthday-date">7.21</span>
+                    </h2>
+                </section>
+
+                <!-- 生日蛋糕区域 -->
+                <section class="cake-section">
+                    <div id="birthday-cake" class="birthday-cake">
+                        <div class="cake-container">
+                            <!-- 蛋糕将通过CSS和JS生成 -->
+                        </div>
+                        <div class="cake-instructions">
+                            <p>点击蜡烛点燃，长按许愿并吹灭</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 祝福文字区域 -->
+                <section class="wishes-section">
+                    <div id="wishes-text" class="wishes-text">
+                        <p class="wish-line" data-delay="0">愿你的每一天都充满阳光与欢笑</p>
+                        <p class="wish-line" data-delay="1000">愿你的梦想都能如愿以偿</p>
+                        <p class="wish-line" data-delay="2000">愿我们一起度过更多美好时光</p>
+                        <p class="wish-line special-wish" data-delay="3000">我爱你，菱菱 💕</p>
+                    </div>
+                </section>
+
+                <!-- 交互游戏区域 -->
+                <section class="games-section">
+                    <div class="games-container">
+                        <div class="game-item surprise-box">
+                            <button class="game-trigger">🎁 惊喜盒子</button>
+                        </div>
+                        <div class="game-item balloon-game">
+                            <button class="game-trigger">🎈 气球游戏</button>
+                        </div>
+                        <div class="game-item memory-game">
+                            <button class="game-trigger">💝 记忆翻牌</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 照片回忆区域 -->
+                <section class="memories-section">
+                    <div id="photo-gallery" class="photo-gallery">
+                        <h3 class="gallery-title">我们的美好回忆</h3>
+                        <div class="gallery-container">
+                            <div class="photo-slider">
+                                <!-- 照片将通过JS动态加载 -->
+                                <div class="photo-placeholder">
+                                    <p>点击这里添加我们的照片</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- 音乐控制器 -->
+            <div id="music-player" class="music-player">
+                <div class="player-controls">
+                    <button id="play-pause-btn" class="player-btn">⏸️</button>
+                    <div class="volume-control">
+                        <button id="volume-btn" class="volume-btn">🔊</button>
+                        <input type="range" id="volume-slider" class="volume-slider" min="0" max="1" step="0.1" value="0.7">
+                    </div>
+                </div>
+                <div class="now-playing">
+                    <span id="current-song">生日快乐歌</span>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- 音频元素 -->
+    <audio id="background-music" preload="none" loop>
+        <!-- 音频源将通过JavaScript动态设置 -->
+        <!-- 用户可以将音频文件放在assets/audio/目录中 -->
+        您的浏览器不支持音频播放。
+    </audio>
+
+    <!-- 第三方库 -->
+    <script src="libs/hammer.min.js"></script>
+
+    <!-- 自定义JavaScript -->
+    <script src="js/main.js"></script>
+    <script src="js/particles.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/mobile.js"></script>
+    
+    <!-- 调试脚本 -->
+    <script src="js/debug.js"></script>
+
+    <!-- 页面加载完成后的初始化 -->
+    <script>
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化应用
+            if (typeof window.BirthdayApp !== 'undefined') {
+                window.BirthdayApp.init();
+            }
+        });
+        
+        // 错误处理
+        window.addEventListener('error', function(e) {
+            console.error('页面错误:', e.error);
+        });
+    </script>
+
+</body>
+</html> 

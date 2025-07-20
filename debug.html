@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调试页面 - 菱菱生日祝福</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        .debug-container {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin: 1rem;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            color: #FF69B4;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #FF1493;
+            margin-bottom: 2rem;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #FF69B4, #FF1493);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.6);
+        }
+        
+        .status {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f0f0f0;
+            border-radius: 10px;
+            font-family: monospace;
+        }
+        
+        .balloon {
+            position: absolute;
+            font-size: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        .star {
+            position: absolute;
+            font-size: 1rem;
+            animation: twinkle 2s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1 class="title">🎂 菱菱生日快乐 🎂</h1>
+        <h2 class="subtitle">7月21日 - 调试页面</h2>
+        
+        <button class="test-button" onclick="testAudio()">🎵 测试音效</button>
+        <button class="test-button" onclick="testBalloons()">🎈 测试气球</button>
+        <button class="test-button" onclick="testFirework()">🎆 测试烟花</button>
+        <button class="test-button" onclick="goToMain()">🚀 进入主页面</button>
+        
+        <div class="status" id="status">
+            ✅ 调试页面已加载<br>
+            📍 服务器地址: <span id="current-url"></span><br>
+            🎵 音频状态: <span id="audio-status">检测中...</span><br>
+            🎮 交互状态: 准备就绪
+        </div>
+    </div>
+    
+    <script>
+        // 显示当前URL
+        document.getElementById('current-url').textContent = window.location.href;
+        
+        // 测试音效
+        function testAudio() {
+            const audio = new Audio('assets/audio/effects/click.mp3');
+            audio.play().then(() => {
+                updateStatus('🎵 点击音效播放成功');
+            }).catch(error => {
+                updateStatus('🎵 点击音效播放失败: ' + error.message);
+            });
+        }
+        
+        // 测试气球
+        function testBalloons() {
+            for (let i = 0; i < 5; i++) {
+                createBalloon();
+            }
+            updateStatus('🎈 创建了5个测试气球');
+        }
+        
+        // 创建气球
+        function createBalloon() {
+            const balloon = document.createElement('div');
+            balloon.className = 'balloon';
+            balloon.innerHTML = '🎈';
+            balloon.style.left = Math.random() * 90 + '%';
+            balloon.style.top = Math.random() * 80 + '%';
+            balloon.style.animationDelay = Math.random() * 2 + 's';
+            
+            balloon.addEventListener('click', () => {
+                balloon.style.transform = 'scale(1.5)';
+                balloon.style.opacity = '0';
+                setTimeout(() => balloon.remove(), 300);
+                testAudio();
+            });
+            
+            document.body.appendChild(balloon);
+            
+            // 3秒后自动移除
+            setTimeout(() => balloon.remove(), 3000);
+        }
+        
+        // 测试烟花
+        function testFirework() {
+            for (let i = 0; i < 10; i++) {
+                createStar();
+            }
+            updateStatus('🎆 创建了烟花效果');
+        }
+        
+        // 创建星星
+        function createStar() {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.innerHTML = '⭐';
+            star.style.left = Math.random() * 90 + '%';
+            star.style.top = Math.random() * 80 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            
+            document.body.appendChild(star);
+            
+            // 2秒后自动移除
+            setTimeout(() => star.remove(), 2000);
+        }
+        
+        // 进入主页面
+        function goToMain() {
+            updateStatus('🚀 跳转到主页面...');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        }
+        
+        // 更新状态
+        function updateStatus(message) {
+            const status = document.getElementById('status');
+            status.innerHTML += '<br>⏰ ' + new Date().toLocaleTimeString() + ': ' + message;
+            status.scrollTop = status.scrollHeight;
+        }
+        
+        // 检测音频文件
+        const audioFiles = [
+            'assets/audio/happy-birthday.mp3',
+            'assets/audio/effects/click.mp3',
+            'assets/audio/effects/pop.mp3',
+            'assets/audio/effects/sparkle.mp3'
+        ];
+        
+        let audioCheckCount = 0;
+        const totalAudioFiles = audioFiles.length;
+        
+        audioFiles.forEach(src => {
+            const audio = new Audio();
+            audio.addEventListener('canplaythrough', () => {
+                audioCheckCount++;
+                if (audioCheckCount === totalAudioFiles) {
+                    document.getElementById('audio-status').textContent = '全部可用 ✅';
+                }
+            });
+            audio.addEventListener('error', () => {
+                audioCheckCount++;
+                if (audioCheckCount === totalAudioFiles) {
+                    document.getElementById('audio-status').textContent = '部分可用 ⚠️';
+                }
+            });
+            audio.src = src;
+        });
+        
+        // 页面加载完成
+        window.addEventListener('load', () => {
+            updateStatus('🎉 调试页面加载完成');
+            updateStatus('📱 设备类型: ' + (navigator.userAgent.includes('Mobile') ? '移动设备' : '桌面设备'));
+        });
+    </script>
+</body>
+</html> 

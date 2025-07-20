@@ -1,0 +1,544 @@
+/* =============================================================================
+   菱菱生日祝福网页 - 移动端样式文件
+   作者: 爱你的人
+   创建时间: 2025年
+   描述: 移动端优化、触摸交互和响应式特定样式
+   ============================================================================= */
+
+/* ===== 移动端基础设置 ===== */
+
+/* 触摸优化 */
+@media (max-width: 768px) {
+    /* 防止iOS双击缩放 */
+    * {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    
+    /* 允许文字选择（特定元素） */
+    .wishes-text,
+    .gallery-title,
+    .cake-instructions {
+        -webkit-user-select: text;
+        -moz-user-select: text;
+        -ms-user-select: text;
+        user-select: text;
+    }
+    
+    /* 移除高亮效果 */
+    * {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+    }
+    
+    /* 防止页面滚动弹性 */
+    body {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    .main-container {
+        height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* ===== 触摸友好的控件尺寸 ===== */
+
+@media (max-width: 768px) {
+    /* 最小触摸目标44px */
+    .control-btn,
+    .game-trigger,
+    .enter-button,
+    .player-btn {
+        min-width: 44px;
+        min-height: 44px;
+        touch-action: manipulation;
+    }
+    
+    /* 扩大点击区域 */
+    .control-btn::before,
+    .volume-btn::before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+        z-index: -1;
+    }
+}
+
+/* ===== 移动端布局调整 ===== */
+
+@media (max-width: 768px) {
+    /* 标题区域 */
+    .title-section {
+        padding-top: var(--spacing-xl);
+        margin-bottom: var(--spacing-2xl);
+    }
+    
+    .main-title {
+        font-size: clamp(2rem, 8vw, 4rem);
+        line-height: 1.1;
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .subtitle {
+        font-size: clamp(1.2rem, 5vw, 2rem);
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    /* 蛋糕区域 */
+    .cake-section {
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-2xl);
+    }
+    
+    .birthday-cake {
+        max-width: 280px;
+        margin: 0 auto;
+    }
+    
+    /* 祝福文字 */
+    .wishes-section {
+        padding: var(--spacing-md);
+    }
+    
+    .wish-line {
+        font-size: clamp(1rem, 4vw, 1.25rem);
+        margin-bottom: var(--spacing-md);
+        line-height: 1.5;
+    }
+    
+    .special-wish {
+        font-size: clamp(1.2rem, 5vw, 1.5rem);
+    }
+    
+    /* 游戏区域 */
+    .games-section {
+        padding: var(--spacing-md);
+    }
+    
+    .games-container {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .game-trigger {
+        padding: var(--spacing-lg);
+        font-size: var(--font-size-lg);
+        border-radius: var(--border-radius-lg);
+    }
+    
+    /* 照片区域 */
+    .memories-section {
+        padding: var(--spacing-md);
+    }
+    
+    .gallery-container {
+        padding: var(--spacing-lg);
+    }
+    
+    .photo-placeholder {
+        height: 200px;
+        font-size: var(--font-size-base);
+    }
+}
+
+/* ===== 极小屏幕优化 ===== */
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: var(--spacing-sm);
+    }
+    
+    .controls-header {
+        top: var(--spacing-sm);
+        right: var(--spacing-sm);
+        gap: var(--spacing-xs);
+    }
+    
+    .control-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .btn-icon {
+        font-size: var(--font-size-lg);
+    }
+    
+    .main-title {
+        font-size: clamp(1.8rem, 7vw, 3rem);
+    }
+    
+    .subtitle {
+        font-size: clamp(1rem, 4vw, 1.5rem);
+    }
+    
+    .enter-button {
+        padding: var(--spacing-md) var(--spacing-lg);
+        font-size: var(--font-size-base);
+    }
+}
+
+/* ===== 横屏模式适配 ===== */
+
+@media (max-width: 768px) and (orientation: landscape) {
+    .welcome-screen {
+        padding: var(--spacing-md);
+    }
+    
+    .welcome-title {
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .main-title {
+        font-size: clamp(1.5rem, 6vw, 2.5rem);
+    }
+    
+    .subtitle {
+        font-size: clamp(1rem, 4vw, 1.5rem);
+    }
+    
+    .cake-section {
+        padding: var(--spacing-md);
+    }
+    
+    .wishes-section,
+    .games-section,
+    .memories-section {
+        padding: var(--spacing-sm) var(--spacing-md);
+        margin-bottom: var(--spacing-lg);
+    }
+}
+
+/* ===== 音乐播放器移动端优化 ===== */
+
+@media (max-width: 768px) {
+    .music-player {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+        padding: var(--spacing-md);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+    }
+    
+    .player-controls {
+        justify-content: space-between;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .volume-control {
+        max-width: 150px;
+    }
+    
+    .volume-slider {
+        height: 6px;
+    }
+    
+    .volume-slider::-webkit-slider-thumb {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .now-playing {
+        text-align: center;
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* ===== 触摸手势优化 ===== */
+
+@media (max-width: 768px) {
+    /* 可拖拽元素 */
+    .draggable {
+        touch-action: none;
+        cursor: grab;
+    }
+    
+    .draggable:active {
+        cursor: grabbing;
+    }
+    
+    /* 可滑动区域 */
+    .swipeable {
+        touch-action: pan-x pan-y;
+    }
+    
+    /* 长按效果 */
+    .long-press {
+        -webkit-touch-callout: default;
+    }
+    
+    /* 防止意外缩放 */
+    .no-zoom {
+        touch-action: pan-x pan-y;
+    }
+}
+
+/* ===== 加载屏幕移动端优化 ===== */
+
+@media (max-width: 768px) {
+    .loading-content {
+        max-width: 250px;
+        padding: var(--spacing-lg);
+    }
+    
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border-width: 2px;
+    }
+    
+    .loading-text {
+        font-size: var(--font-size-base);
+    }
+}
+
+/* ===== 欢迎屏幕移动端优化 ===== */
+
+@media (max-width: 768px) {
+    .welcome-screen {
+        padding: var(--spacing-lg);
+    }
+    
+    .welcome-title {
+        font-size: clamp(1.5rem, 6vw, 2.5rem);
+        margin-bottom: var(--spacing-xl);
+    }
+    
+    .title-line {
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .enter-button {
+        padding: var(--spacing-lg) var(--spacing-xl);
+        font-size: var(--font-size-lg);
+        width: auto;
+        min-width: 200px;
+    }
+}
+
+/* ===== 粒子效果移动端优化 ===== */
+
+@media (max-width: 768px) {
+    .particles-canvas {
+        /* 降低分辨率以提升性能 */
+        image-rendering: pixelated;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: crisp-edges;
+    }
+    
+    /* 减少粒子数量的类 */
+    .reduced-particles .particles-canvas {
+        opacity: 0.7;
+    }
+}
+
+/* ===== 背景装饰移动端优化 ===== */
+
+@media (max-width: 768px) {
+    .background-decorations {
+        /* 降低装饰元素的密度 */
+        opacity: 0.8;
+    }
+    
+    .balloons-container,
+    .stars-container {
+        /* 减少元素数量以提升性能 */
+        transform: scale(0.8);
+    }
+}
+
+/* ===== 安全区域适配 ===== */
+
+@media (max-width: 768px) {
+    /* iPhone X及以上设备的安全区域 */
+    @supports (padding: max(0px)) {
+        .controls-header {
+            top: max(var(--spacing-lg), env(safe-area-inset-top));
+            right: max(var(--spacing-lg), env(safe-area-inset-right));
+        }
+        
+        .music-player {
+            bottom: max(var(--spacing-lg), env(safe-area-inset-bottom));
+            left: max(var(--spacing-lg), env(safe-area-inset-left));
+            right: max(var(--spacing-lg), env(safe-area-inset-right));
+        }
+        
+        .main-content {
+            padding-left: max(var(--spacing-xl), env(safe-area-inset-left));
+            padding-right: max(var(--spacing-xl), env(safe-area-inset-right));
+        }
+    }
+}
+
+/* ===== 高DPI屏幕优化 ===== */
+
+@media (max-width: 768px) and (-webkit-min-device-pixel-ratio: 2),
+       (max-width: 768px) and (min-resolution: 192dpi) {
+    /* 高分辨率屏幕的图像优化 */
+    .loading-spinner {
+        border-width: 1px;
+    }
+    
+    /* 确保边框在高DPI下清晰 */
+    .control-btn,
+    .game-trigger,
+    .gallery-container {
+        border-width: 0.5px;
+    }
+}
+
+/* ===== 性能优化 ===== */
+
+@media (max-width: 768px) {
+    /* 强制硬件加速 */
+    .animate-fadeInUp,
+    .animate-scaleIn,
+    .animate-bounce,
+    .main-title,
+    .enter-button {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+    
+    /* 优化重绘性能 */
+    .background-decorations,
+    .particles-canvas {
+        will-change: transform;
+    }
+    
+    /* 在移动端减少复杂动画 */
+    .animate-rainbow,
+    .animate-textGlow {
+        animation-iteration-count: 3;
+    }
+}
+
+/* ===== 无障碍访问优化 ===== */
+
+@media (max-width: 768px) {
+    /* 增强焦点可见性 */
+    *:focus-visible {
+        outline: 3px solid var(--primary-pink);
+        outline-offset: 3px;
+    }
+    
+    /* 确保文字对比度 */
+    .wish-line,
+    .gallery-title,
+    .cake-instructions {
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+}
+
+/* ===== 网络优化相关 ===== */
+
+@media (max-width: 768px) {
+    /* 在慢网络环境下的降级显示 */
+    .slow-connection .background-decorations {
+        display: none;
+    }
+    
+    .slow-connection .particles-canvas {
+        display: none;
+    }
+    
+    .slow-connection .animate-balloonFloat,
+    .slow-connection .animate-starTwinkle {
+        animation: none;
+    }
+}
+
+/* ===== 设备特定优化 ===== */
+
+/* iPad专用样式 */
+@media (min-width: 481px) and (max-width: 768px) {
+    .games-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-lg);
+    }
+    
+    .main-title {
+        font-size: clamp(2.5rem, 6vw, 3.5rem);
+    }
+    
+    .subtitle {
+        font-size: clamp(1.5rem, 4vw, 2rem);
+        flex-direction: row;
+        gap: var(--spacing-lg);
+    }
+}
+
+/* 小屏手机专用样式 */
+@media (max-width: 375px) {
+    .main-content {
+        padding: var(--spacing-xs);
+    }
+    
+    .birthday-content {
+        padding: 0;
+    }
+    
+    .cake-section,
+    .wishes-section,
+    .games-section,
+    .memories-section {
+        margin-bottom: var(--spacing-lg);
+        padding: var(--spacing-sm);
+    }
+    
+    .enter-button {
+        min-width: 180px;
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+}
+
+/* ===== 动画性能优化 ===== */
+
+@media (max-width: 768px) and (prefers-reduced-motion: no-preference) {
+    /* 在移动端减少同时运行的动画数量 */
+    .animate-delay-100 { animation-delay: 0.2s; }
+    .animate-delay-200 { animation-delay: 0.4s; }
+    .animate-delay-300 { animation-delay: 0.6s; }
+    .animate-delay-500 { animation-delay: 1s; }
+    .animate-delay-700 { animation-delay: 1.4s; }
+    .animate-delay-1000 { animation-delay: 2s; }
+}
+
+/* ===== 低电量模式优化 ===== */
+
+@media (max-width: 768px) {
+    .power-save-mode .animate-balloonFloat,
+    .power-save-mode .animate-starTwinkle,
+    .power-save-mode .animate-confettiFall,
+    .power-save-mode .animate-pulse {
+        animation-play-state: paused;
+    }
+    
+    .power-save-mode .background-decorations {
+        opacity: 0.3;
+    }
+    
+    .power-save-mode .particles-canvas {
+        display: none;
+    }
+} 

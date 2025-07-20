@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菱菱生日祝福 - 简化版</title>
+    <style>
+        :root {
+            --primary-pink: #FF69B4;
+            --light-pink: #FFB6C1;
+            --deep-pink: #FF1493;
+            --bg-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-gradient);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* 欢迎屏幕 */
+        .welcome-screen {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-gradient);
+            overflow: hidden;
+        }
+        
+        .welcome-content {
+            text-align: center;
+            z-index: 1;
+        }
+        
+        .welcome-title {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            line-height: 1.2;
+        }
+        
+        .title-line {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-pink);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .enter-button {
+            position: relative;
+            padding: 1rem 2rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(45deg, var(--primary-pink), var(--deep-pink));
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 105, 180, 0.3);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .enter-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 105, 180, 0.5);
+        }
+        
+        .enter-button:active {
+            transform: translateY(0);
+        }
+        
+        /* 主内容 */
+        .main-content {
+            position: relative;
+            min-height: 100vh;
+            background: var(--bg-gradient);
+            padding: 2rem;
+        }
+        
+        .controls-header {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 100;
+        }
+        
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+        
+        .birthday-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            padding-top: 5rem;
+        }
+        
+        .main-title {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            color: var(--primary-pink);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            color: var(--light-pink);
+        }
+        
+        .cake-section {
+            margin: 3rem 0;
+            font-size: 5rem;
+        }
+        
+        .wishes-text {
+            font-size: 1.2rem;
+            line-height: 2;
+            color: white;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* 背景装饰 */
+        .background-decorations {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .balloon {
+            position: absolute;
+            font-size: 2rem;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .balloon:hover {
+            transform: scale(1.2);
+        }
+        
+        .star {
+            position: absolute;
+            font-size: 1rem;
+            cursor: pointer;
+            pointer-events: auto;
+            animation: twinkle 2s infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        /* 音乐播放器 */
+        .music-player {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .player-btn {
+            background: var(--primary-pink);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .volume-slider {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 欢迎屏幕 -->
+    <section id="welcome-screen" class="welcome-screen">
+        <div class="welcome-content">
+            <h1 class="welcome-title">
+                <span class="title-line">欢迎来到</span>
+                <span class="title-line">菱菱的生日世界</span>
+            </h1>
+            <button id="enter-btn" class="enter-button">
+                <span>🎂 点击进入 🎂</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- 主要内容区域 -->
+    <section id="main-content" class="main-content hidden">
+        <!-- 背景装饰层 -->
+        <div class="background-decorations">
+            <div id="balloons-container"></div>
+            <div id="stars-container"></div>
+        </div>
+
+        <!-- 顶部控制区 -->
+        <header class="controls-header">
+            <button id="lights-toggle" class="control-btn" title="开关灯光">💡</button>
+            <button id="music-toggle" class="control-btn" title="音乐开关">🎵</button>
+            <button id="effects-toggle" class="control-btn" title="特效开关">✨</button>
+        </header>
+
+        <!-- 主要祝福内容 -->
+        <div class="birthday-content">
+            <h1 class="main-title">
+                <span>亲爱的菱菱</span>
+            </h1>
+            <h2 class="subtitle">
+                <span>生日快乐 🎂 7.21</span>
+            </h2>
+
+            <!-- 生日蛋糕 -->
+            <section class="cake-section">
+                🎂🕯️🎉
+            </section>
+
+            <!-- 祝福文字 -->
+            <div class="wishes-text">
+                <p>🌟 在这个特别的日子里，愿你被满满的爱意包围</p>
+                <p>💖 愿你的每一天都像今天一样闪闪发光</p>
+                <p>🎈 愿所有的美好都如期而至</p>
+                <p>🎁 愿你永远保持那颗纯真快乐的心</p>
+                <p>🌈 生日快乐，我最爱的菱菱！</p>
+            </div>
+        </div>
+
+        <!-- 音乐播放器 -->
+        <div class="music-player">
+            <button id="play-pause-btn" class="player-btn">⏸️</button>
+            <span>生日音乐</span>
+            <input type="range" id="volume-slider" class="volume-slider" min="0" max="1" step="0.1" value="0.7">
+        </div>
+    </section>
+
+    <!-- 音频元素 -->
+    <audio id="background-music" preload="none" loop>
+        您的浏览器不支持音频播放。
+    </audio>
+
+    <script>
+        // 简化的主要脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎂 简化版生日页面加载中...');
+            
+            const elements = {
+                welcomeScreen: document.getElementById('welcome-screen'),
+                mainContent: document.getElementById('main-content'),
+                enterBtn: document.getElementById('enter-btn'),
+                balloonsContainer: document.getElementById('balloons-container'),
+                starsContainer: document.getElementById('stars-container'),
+                backgroundMusic: document.getElementById('background-music')
+            };
+
+            // 检查音频文件
+            if (elements.backgroundMusic) {
+                elements.backgroundMusic.src = 'assets/audio/happy-birthday.mp3';
+            }
+
+            // 进入按钮事件
+            if (elements.enterBtn) {
+                elements.enterBtn.addEventListener('click', function() {
+                    console.log('🚀 进入主页面');
+                    elements.welcomeScreen.style.display = 'none';
+                    elements.mainContent.classList.remove('hidden');
+                    createDecorations();
+                    console.log('✅ 主页面已显示');
+                });
+            }
+
+            // 创建装饰
+            function createDecorations() {
+                // 创建气球
+                for (let i = 0; i < 5; i++) {
+                    createBalloon();
+                }
+                
+                // 创建星星
+                for (let i = 0; i < 10; i++) {
+                    createStar();
+                }
+                
+                console.log('🎨 装饰已创建');
+            }
+
+            function createBalloon() {
+                const balloon = document.createElement('div');
+                balloon.className = 'balloon';
+                balloon.innerHTML = '🎈';
+                balloon.style.left = Math.random() * 85 + 5 + '%';
+                balloon.style.top = Math.random() * 70 + 15 + '%';
+                balloon.style.animationDelay = Math.random() * 3 + 's';
+                
+                balloon.addEventListener('click', function() {
+                    playSound('click');
+                    balloon.style.transform = 'scale(1.5)';
+                    balloon.style.opacity = '0';
+                    setTimeout(() => balloon.remove(), 300);
+                });
+                
+                elements.balloonsContainer.appendChild(balloon);
+            }
+
+            function createStar() {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.innerHTML = '⭐';
+                star.style.left = Math.random() * 95 + '%';
+                star.style.top = Math.random() * 95 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                
+                star.addEventListener('click', function() {
+                    playSound('sparkle');
+                    star.style.transform = 'scale(1.3)';
+                    setTimeout(() => {
+                        star.style.transform = 'scale(1)';
+                    }, 200);
+                });
+                
+                elements.starsContainer.appendChild(star);
+            }
+
+            function playSound(type) {
+                try {
+                    const audio = new Audio(`assets/audio/effects/${type}.mp3`);
+                    audio.volume = 0.3;
+                    audio.play().catch(e => console.log('音效播放失败:', e.message));
+                } catch (e) {
+                    console.log('音效不可用');
+                }
+            }
+
+            // 音乐控制
+            const musicToggle = document.getElementById('music-toggle');
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            
+            if (musicToggle && elements.backgroundMusic) {
+                musicToggle.addEventListener('click', function() {
+                    if (elements.backgroundMusic.paused) {
+                        elements.backgroundMusic.play().catch(e => console.log('音乐播放失败'));
+                    } else {
+                        elements.backgroundMusic.pause();
+                    }
+                });
+            }
+
+            console.log('🎉 简化版页面初始化完成！');
+        });
+    </script>
+</body>
+</html> 

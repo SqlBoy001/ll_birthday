@@ -604,12 +604,14 @@
             function startBackgroundMusic() {
                 if (!elements.backgroundMusic) return;
                 
-                // 检查是否有第一阶段预加载状态
+                // 检查超级快速加载状态
+                const isUltraFastLoaded = localStorage.getItem('birthdayUltraFastLoaded') === 'true';
+                // 向后兼容：也检查旧的第一阶段加载状态
                 const isStageOneLoaded = localStorage.getItem('birthdayStageOneLoaded') === 'true';
                 
-                if (isStageOneLoaded) {
-                    console.log('🚀 检测到第一阶段预加载完成，即时播放音乐');
-                    // 第一阶段预加载完成，立即播放
+                if (isUltraFastLoaded || isStageOneLoaded) {
+                    console.log('🚀 检测到快速预加载完成，即时播放音乐');
+                    // 预加载完成，立即播放
                     elements.backgroundMusic.play().then(() => {
                         console.log('🎵 预加载生日音乐立即开始播放');
                         removeMusicPrompt();
@@ -622,6 +624,31 @@
                     console.log('⏳ 未检测到预加载，等待用户交互');
                     showMusicClickPrompt();
                 }
+                
+                // 启动GIF预加载（如果超级快速模式）
+                if (isUltraFastLoaded) {
+                    startGifPreloading();
+                }
+            }
+
+            // 预加载生日蛋糕GIF
+            function startGifPreloading() {
+                console.log('🎂 开始后台预加载生日蛋糕GIF...');
+                
+                const cakeImg = new Image();
+                cakeImg.onload = () => {
+                    console.log('✅ 生日蛋糕GIF加载完成，准备显示');
+                    // GIF加载完成后，确保cake元素能正常显示
+                    const cakeElement = document.querySelector('#cake img');
+                    if (cakeElement) {
+                        cakeElement.src = 'assets/images/birthday-cake.gif';
+                        console.log('🎂 生日蛋糕GIF已设置到页面');
+                    }
+                };
+                cakeImg.onerror = () => {
+                    console.warn('⚠️ 生日蛋糕GIF加载失败');
+                };
+                cakeImg.src = 'assets/images/birthday-cake.gif';
             }
 
             // 在后台预加载第二阶段资源（回忆页面需要的）

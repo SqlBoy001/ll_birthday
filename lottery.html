@@ -494,10 +494,11 @@
             backgroundMusic = document.getElementById('background-music');
             backgroundMusic.volume = 0.4; // 设置音量为40%
             
-            // 检查预加载状态
-            const isPreloaded = localStorage.getItem('birthdayResourcesLoaded') === 'true';
+            // 检查预加载状态（使用分层加载状态）
+            const isPage1Loaded = localStorage.getItem('birthdayPage1Loaded') === 'true';
+            const isLotteryLoaded = localStorage.getItem('lotteryPageLoaded') === 'true';
             
-            if (isPreloaded) {
+            if (isPage1Loaded || isLotteryLoaded) {
                 console.log('🚀 检测到预加载状态，立即播放抽奖背景音乐');
                 // 预加载完成，立即播放
                 backgroundMusic.play().then(() => {

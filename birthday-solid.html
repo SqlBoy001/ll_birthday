@@ -604,14 +604,14 @@
             function startBackgroundMusic() {
                 if (!elements.backgroundMusic) return;
                 
-                // 检查是否有预加载状态
-                const isPreloaded = localStorage.getItem('birthdayResourcesLoaded') === 'true';
+                // 检查是否有第一页预加载状态
+                const isPage1Loaded = localStorage.getItem('birthdayPage1Loaded') === 'true';
                 
-                if (isPreloaded) {
-                    console.log('🚀 检测到预加载状态，即时播放音乐');
+                if (isPage1Loaded) {
+                    console.log('🚀 检测到快速预加载状态，即时播放生日音乐');
                     // 预加载完成，立即播放
                     elements.backgroundMusic.play().then(() => {
-                        console.log('🎵 预加载音乐立即开始播放');
+                        console.log('🎵 预加载生日音乐立即开始播放');
                         removeMusicPrompt();
                     }).catch(e => {
                         console.log('预加载音乐播放失败:', e.message);
@@ -622,6 +622,81 @@
                     console.log('⏳ 未检测到预加载，等待用户交互');
                     showMusicClickPrompt();
                 }
+            }
+
+            // 启动后台预加载后续页面资源
+            function startBackgroundPreloading() {
+                // 检查是否已经预加载了回忆页面
+                const memoryLoaded = localStorage.getItem('memoryPageLoaded') === 'true';
+                if (memoryLoaded) {
+                    console.log('✅ 回忆页面资源已缓存');
+                    return;
+                }
+
+                console.log('🔄 在生日页面启动后台预加载回忆页面资源...');
+                
+                // 预加载回忆页面的图片
+                const memoryImages = [
+                    'memory1.jpg', 'memory2.jpg', 'memory3.jpg', 'memory4.jpg',
+                    'memory5.jpg', 'memory6.jpg', 'memory7.jpg', 'memory8.jpg'
+                ];
+                
+                let loadedCount = 0;
+                const totalImages = memoryImages.length;
+                
+                memoryImages.forEach((imageName, index) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        loadedCount++;
+                        console.log(`📸 后台预加载回忆图片 ${index + 1}/${totalImages}: ${imageName}`);
+                        if (loadedCount === totalImages) {
+                            console.log('✅ 回忆页面资源后台预加载完成');
+                            localStorage.setItem('memoryPageLoaded', 'true');
+                            // 开始预加载抽奖页面音频
+                            preloadLotteryAudio();
+                        }
+                    };
+                    img.onerror = () => {
+                        loadedCount++;
+                        console.warn(`⚠️ 回忆图片预加载失败: ${imageName}`);
+                        if (loadedCount === totalImages) {
+                            localStorage.setItem('memoryPageLoaded', 'true');
+                            preloadLotteryAudio();
+                        }
+                    };
+                    img.src = `assets/images/memories/${imageName}`;
+                });
+            }
+
+            function preloadLotteryAudio() {
+                const lotteryLoaded = localStorage.getItem('lotteryPageLoaded') === 'true';
+                if (lotteryLoaded) {
+                    console.log('✅ 抽奖页面资源已缓存');
+                    return;
+                }
+
+                console.log('🎵 开始后台预加载抽奖页面音频...');
+                
+                const audio1 = new Audio('assets/audio/birthday-song.mp3');
+                const audio2 = new Audio('assets/audio/lottery.mp3');
+                
+                let audioLoadedCount = 0;
+                const totalAudio = 2;
+                
+                const onAudioLoad = () => {
+                    audioLoadedCount++;
+                    if (audioLoadedCount === totalAudio) {
+                        console.log('✅ 抽奖页面音频后台预加载完成');
+                        localStorage.setItem('lotteryPageLoaded', 'true');
+                        localStorage.setItem('allResourcesLoaded', 'true');
+                        console.log('🎉 所有页面资源后台预加载完成！');
+                    }
+                };
+                
+                audio1.addEventListener('canplaythrough', onAudioLoad);
+                audio2.addEventListener('canplaythrough', onAudioLoad);
+                audio1.addEventListener('error', onAudioLoad);
+                audio2.addEventListener('error', onAudioLoad);
             }
 
             function showMusicClickPrompt() {
@@ -1221,6 +1296,11 @@
             }
 
             // 移动端提示已删除，预加载解决了资源加载问题
+
+            // 启动后台预加载其他页面资源
+            setTimeout(() => {
+                startBackgroundPreloading();
+            }, 2000); // 等2秒让页面稳定后开始后台预加载
 
             // 导航功能已移除
 

@@ -445,10 +445,11 @@
             if (backgroundMusic) {
                 backgroundMusic.volume = 0.4; // 设置音量为40%
                 
-                // 检查预加载状态
-                const isPreloaded = localStorage.getItem('birthdayResourcesLoaded') === 'true';
+                // 检查预加载状态（使用分层加载状态）
+                const isPage1Loaded = localStorage.getItem('birthdayPage1Loaded') === 'true';
+                const isMemoryLoaded = localStorage.getItem('memoryPageLoaded') === 'true';
                 
-                if (isPreloaded) {
+                if (isPage1Loaded || isMemoryLoaded) {
                     console.log('🚀 检测到预加载状态，立即播放回忆音乐');
                     // 预加载完成，立即播放
                     backgroundMusic.play().then(() => {

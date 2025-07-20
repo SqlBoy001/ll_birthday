@@ -147,13 +147,13 @@
     
     <div class="loader-container">
         <h1 class="title">🎂 菱菱生日祝福</h1>
-        <p class="subtitle">正在为你准备专属的生日惊喜...</p>
+        <p class="subtitle">正在准备生日页面，马上就好...</p>
         
         <div class="progress-container">
             <div class="progress-bar" id="progressBar"></div>
         </div>
         
-        <div class="progress-text" id="progressText">正在加载资源... 0%</div>
+        <div class="progress-text" id="progressText">正在加载生日页面... 0%</div>
         
         <div class="loading-hearts">
             <span class="heart">💕</span>
@@ -162,31 +162,17 @@
         </div>
     </div>
 
-    <!-- 隐藏的预加载资源 -->
+    <!-- 隐藏的预加载资源 - 只加载第一个页面的核心资源 -->
     <div class="hidden">
         <img id="cakeGif" src="assets/images/birthday-cake.gif" alt="生日蛋糕">
-        <img id="memory1" src="assets/images/memories/memory1.jpg" alt="回忆1">
-        <img id="memory2" src="assets/images/memories/memory2.jpg" alt="回忆2">
-        <img id="memory3" src="assets/images/memories/memory3.jpg" alt="回忆3">
-        <img id="memory4" src="assets/images/memories/memory4.jpg" alt="回忆4">
-        <img id="memory5" src="assets/images/memories/memory5.jpg" alt="回忆5">
-        <img id="memory6" src="assets/images/memories/memory6.jpg" alt="回忆6">
-        <img id="memory7" src="assets/images/memories/memory7.jpg" alt="回忆7">
-        <img id="memory8" src="assets/images/memories/memory8.jpg" alt="回忆8">
         
         <audio id="happyBirthdayAudio" preload="auto">
             <source src="assets/audio/happy-birthday.mp3" type="audio/mpeg">
         </audio>
-        <audio id="birthdaySongAudio" preload="auto">
-            <source src="assets/audio/birthday-song.mp3" type="audio/mpeg">
-        </audio>
-        <audio id="lotteryAudio" preload="auto">
-            <source src="assets/audio/lottery.mp3" type="audio/mpeg">
-        </audio>
     </div>
 
     <script>
-        class Preloader {
+        class FastPreloader {
             constructor() {
                 this.progress = 0;
                 this.loadedCount = 0;
@@ -200,58 +186,43 @@
 
             init() {
                 this.createParticles();
-                this.collectResources();
+                this.collectCoreResources();
                 this.startLoading();
             }
 
             createParticles() {
                 const particlesContainer = document.getElementById('particles');
-                for (let i = 0; i < 20; i++) {
+                for (let i = 0; i < 15; i++) {
                     const particle = document.createElement('div');
                     particle.className = 'particle';
                     particle.style.left = Math.random() * 100 + '%';
-                    particle.style.width = particle.style.height = (Math.random() * 6 + 2) + 'px';
+                    particle.style.width = particle.style.height = (Math.random() * 4 + 2) + 'px';
                     particle.style.animationDelay = Math.random() * 3 + 's';
-                    particle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
                     particlesContainer.appendChild(particle);
                 }
             }
 
-            collectResources() {
-                // 收集所有需要预加载的资源
-                const images = [
-                    'cakeGif', 'memory1', 'memory2', 'memory3', 'memory4',
-                    'memory5', 'memory6', 'memory7', 'memory8'
-                ];
-                
-                const audios = [
-                    'happyBirthdayAudio', 'birthdaySongAudio', 'lotteryAudio'
+            collectCoreResources() {
+                // 只收集第一个页面的核心资源
+                const coreResources = [
+                    { id: 'cakeGif', type: 'image', name: '生日蛋糕' },
+                    { id: 'happyBirthdayAudio', type: 'audio', name: '生日歌' }
                 ];
 
-                images.forEach(id => {
-                    const element = document.getElementById(id);
+                coreResources.forEach(resource => {
+                    const element = document.getElementById(resource.id);
                     if (element) {
                         this.resources.push({
-                            type: 'image',
+                            type: resource.type,
                             element: element,
-                            name: element.alt || id
-                        });
-                    }
-                });
-
-                audios.forEach(id => {
-                    const element = document.getElementById(id);
-                    if (element) {
-                        this.resources.push({
-                            type: 'audio',
-                            element: element,
-                            name: id
+                            name: resource.name
                         });
                     }
                 });
 
                 this.totalResources = this.resources.length;
-                console.log(`找到 ${this.totalResources} 个资源需要预加载`);
+                console.log(`🚀 快速预加载：找到 ${this.totalResources} 个核心资源`);
             }
 
             startLoading() {
@@ -262,12 +233,12 @@
                         const onLoad = () => {
                             this.loadedCount++;
                             this.updateProgress(resource.name);
-                            console.log(`✅ 已加载: ${resource.name} (${this.loadedCount}/${this.totalResources})`);
+                            console.log(`✅ 核心资源已加载: ${resource.name} (${this.loadedCount}/${this.totalResources})`);
                             resolve();
                         };
 
                         const onError = (error) => {
-                            console.warn(`⚠️ 加载失败: ${resource.name}`, error);
+                            console.warn(`⚠️ 核心资源加载失败: ${resource.name}`, error);
                             this.loadedCount++;
                             this.updateProgress(resource.name + ' (跳过)');
                             resolve(); // 继续加载其他资源
@@ -295,7 +266,7 @@
                 Promise.all(promises).then(() => {
                     setTimeout(() => {
                         this.completeLoading();
-                    }, 500); // 稍作延迟，让用户看到100%
+                    }, 300); // 很短的延迟，让用户看到100%
                 });
             }
 
@@ -307,16 +278,85 @@
 
             completeLoading() {
                 this.progressBar.style.width = '100%';
-                this.progressText.textContent = '加载完成！准备进入生日祝福页面... 🎉';
+                this.progressText.textContent = '生日页面准备完成！🎉';
                 
-                // 将加载状态保存到localStorage
-                localStorage.setItem('birthdayResourcesLoaded', 'true');
+                // 保存第一个页面的加载状态
+                localStorage.setItem('birthdayPage1Loaded', 'true');
                 localStorage.setItem('preloadTime', Date.now().toString());
                 
+                // 启动后台预加载后续页面
+                this.startBackgroundPreload();
+                
                 setTimeout(() => {
-                    // 跳转到生日祝福页面
+                    // 快速跳转到生日祝福页面
                     window.location.href = 'birthday-solid.html';
-                }, 1500);
+                }, 800);
+            }
+
+            startBackgroundPreload() {
+                // 在后台开始预加载后续页面的资源
+                console.log('🔄 开始后台预加载回忆页面资源...');
+                this.preloadMemoryPageResources();
+            }
+
+            preloadMemoryPageResources() {
+                // 创建隐藏的图片元素来预加载回忆页面
+                const memoryImages = [
+                    'memory1.jpg', 'memory2.jpg', 'memory3.jpg', 'memory4.jpg',
+                    'memory5.jpg', 'memory6.jpg', 'memory7.jpg', 'memory8.jpg'
+                ];
+                
+                let loadedMemoryCount = 0;
+                const totalMemoryImages = memoryImages.length;
+                
+                memoryImages.forEach((imageName, index) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        loadedMemoryCount++;
+                        console.log(`📸 后台加载回忆图片 ${index + 1}/${totalMemoryImages}: ${imageName}`);
+                        if (loadedMemoryCount === totalMemoryImages) {
+                            console.log('✅ 回忆页面资源后台加载完成');
+                            localStorage.setItem('memoryPageLoaded', 'true');
+                            // 开始预加载抽奖页面音频
+                            this.preloadLotteryAudio();
+                        }
+                    };
+                    img.onerror = () => {
+                        loadedMemoryCount++;
+                        console.warn(`⚠️ 回忆图片加载失败: ${imageName}`);
+                        if (loadedMemoryCount === totalMemoryImages) {
+                            localStorage.setItem('memoryPageLoaded', 'true');
+                            this.preloadLotteryAudio();
+                        }
+                    };
+                    img.src = `assets/images/memories/${imageName}`;
+                });
+            }
+
+            preloadLotteryAudio() {
+                // 预加载抽奖页面的音频
+                const audio1 = new Audio('assets/audio/birthday-song.mp3');
+                const audio2 = new Audio('assets/audio/lottery.mp3');
+                
+                let audioLoadedCount = 0;
+                const totalAudio = 2;
+                
+                const onAudioLoad = () => {
+                    audioLoadedCount++;
+                    if (audioLoadedCount === totalAudio) {
+                        console.log('✅ 抽奖页面音频后台加载完成');
+                        localStorage.setItem('lotteryPageLoaded', 'true');
+                        localStorage.setItem('allResourcesLoaded', 'true');
+                        console.log('🎉 所有页面资源后台预加载完成！');
+                    }
+                };
+                
+                audio1.addEventListener('canplaythrough', onAudioLoad);
+                audio2.addEventListener('canplaythrough', onAudioLoad);
+                audio1.addEventListener('error', onAudioLoad);
+                audio2.addEventListener('error', onAudioLoad);
+                
+                console.log('🎵 开始后台加载抽奖页面音频...');
             }
         }
 
@@ -325,26 +365,26 @@
             const lastPreload = localStorage.getItem('preloadTime');
             const now = Date.now();
             
-            // 如果超过1小时，重新预加载
-            if (!lastPreload || (now - parseInt(lastPreload)) > 3600000) {
+            // 如果超过30分钟，重新预加载
+            if (!lastPreload || (now - parseInt(lastPreload)) > 1800000) {
                 return true;
             }
             
-            return !localStorage.getItem('birthdayResourcesLoaded');
+            return !localStorage.getItem('birthdayPage1Loaded');
         }
 
-        // 启动预加载器
+        // 启动快速预加载器
         if (checkNeedPreload()) {
-            console.log('🚀 开始预加载资源...');
-            new Preloader();
+            console.log('🚀 开始快速预加载核心资源...');
+            new FastPreloader();
         } else {
-            console.log('✅ 资源已缓存，直接跳转');
-            document.querySelector('.subtitle').textContent = '资源已准备就绪，即将进入...';
+            console.log('✅ 核心资源已缓存，直接跳转');
+            document.querySelector('.subtitle').textContent = '生日页面已准备就绪，即将进入...';
             document.querySelector('.progress-bar').style.width = '100%';
             document.querySelector('.progress-text').textContent = '准备完成！🎉';
             setTimeout(() => {
                 window.location.href = 'birthday-solid.html';
-            }, 1000);
+            }, 500);
         }
     </script>
 </body>

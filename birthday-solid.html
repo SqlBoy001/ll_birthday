@@ -604,12 +604,19 @@
             function startBackgroundMusic() {
                 if (!elements.backgroundMusic) return;
                 
-                // 检查超级快速加载状态
+                // 检测微信环境
+                const isWeChat = /MicroMessenger/i.test(navigator.userAgent);
+                const isWeChatWork = /wxwork/i.test(navigator.userAgent);
+                
+                // 检查各种预加载状态
+                const isWeChatOptimized = localStorage.getItem('birthdayWeChatOptimized') === 'true';
                 const isUltraFastLoaded = localStorage.getItem('birthdayUltraFastLoaded') === 'true';
-                // 向后兼容：也检查旧的第一阶段加载状态
                 const isStageOneLoaded = localStorage.getItem('birthdayStageOneLoaded') === 'true';
                 
-                if (isUltraFastLoaded || isStageOneLoaded) {
+                if (isWeChat || isWeChatWork) {
+                    console.log('🔍 检测到微信环境，使用微信优化策略');
+                    handleWeChatMusic();
+                } else if (isUltraFastLoaded || isStageOneLoaded || isWeChatOptimized) {
                     console.log('🚀 检测到快速预加载完成，即时播放音乐');
                     // 预加载完成，立即播放
                     elements.backgroundMusic.play().then(() => {
@@ -626,10 +633,87 @@
                 }
                 
                 // 启动GIF预加载（如果超级快速模式）
-                if (isUltraFastLoaded) {
+                if (isUltraFastLoaded || isWeChatOptimized) {
                     startGifPreloading();
                 }
             }
+
+            // 微信专用音乐处理
+            function handleWeChatMusic() {
+                console.log('🎵 微信环境：创建用户友好的音乐启动方式');
+                
+                // 微信环境下，显示更友好的音乐启动提示
+                const musicPrompt = document.createElement('div');
+                musicPrompt.id = 'wechat-music-prompt';
+                musicPrompt.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: linear-gradient(135deg, #ff6b9d, #ff8e53);
+                    color: white;
+                    padding: 20px 30px;
+                    border-radius: 20px;
+                    text-align: center;
+                    z-index: 1000;
+                    max-width: 90%;
+                    font-size: 1.1rem;
+                    line-height: 1.5;
+                    box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);
+                    backdrop-filter: blur(10px);
+                `;
+                musicPrompt.innerHTML = `
+                    <div style="margin-bottom: 15px;">🎵 生日音乐</div>
+                    <div style="font-size: 0.9em; opacity: 0.9; margin-bottom: 20px;">
+                        轻触下方按钮，开启温馨的生日祝福音乐
+                    </div>
+                    <button onclick="startWeChatMusic()" style="
+                        background: rgba(255,255,255,0.9);
+                        color: #ff6b9d;
+                        border: none;
+                        padding: 12px 25px;
+                        border-radius: 25px;
+                        font-size: 1em;
+                        font-weight: bold;
+                        cursor: pointer;
+                        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                        transition: all 0.3s ease;
+                    " onmousedown="this.style.transform='scale(0.95)'" 
+                       onmouseup="this.style.transform='scale(1)'">
+                        🎉 开始播放音乐
+                    </button>
+                `;
+                
+                document.body.appendChild(musicPrompt);
+                
+                // 微信环境下，5秒后自动尝试播放
+                setTimeout(() => {
+                    if (document.getElementById('wechat-music-prompt')) {
+                        console.log('🎵 微信环境：5秒后自动尝试播放音乐');
+                        startWeChatMusic();
+                    }
+                }, 5000);
+            }
+
+            // 微信音乐启动函数（全局）
+            window.startWeChatMusic = function() {
+                console.log('🎵 微信环境：开始播放生日音乐');
+                
+                const prompt = document.getElementById('wechat-music-prompt');
+                if (prompt) {
+                    prompt.style.opacity = '0';
+                    prompt.style.transform = 'translate(-50%, -50%) scale(0.8)';
+                    setTimeout(() => prompt.remove(), 300);
+                }
+                
+                if (elements.backgroundMusic) {
+                    elements.backgroundMusic.play().then(() => {
+                        console.log('🎵 微信环境：生日音乐播放成功');
+                    }).catch(e => {
+                        console.log('🎵 微信环境：音乐播放失败，将在用户交互后重试');
+                    });
+                }
+            };
 
             // 预加载生日蛋糕GIF
             function startGifPreloading() {

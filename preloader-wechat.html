@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>菱菱生日祝福</title>
+    <!-- 微信分享优化 -->
+    <meta property="og:title" content="菱菱专属生日祝福" />
+    <meta property="og:description" content="为最爱的菱菱准备的温馨生日惊喜" />
+    <meta property="og:image" content="https://sqlboy001.github.io/ll_birthday/assets/images/birthday-cake.gif" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+            /* 微信优化：禁用缩放和选择 */
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        .loader-container {
+            text-align: center;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 2.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        .wechat-tip {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin: 15px 0;
+            font-size: 0.9em;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-container {
+            width: 280px;
+            height: 6px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ff8e53);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.2s ease;
+        }
+
+        .progress-text {
+            font-size: 0.9em;
+            margin-top: 8px;
+            opacity: 0.8;
+        }
+
+        .loading-hearts {
+            margin-top: 20px;
+        }
+
+        .heart {
+            color: #ff6b9d;
+            font-size: 1.3em;
+            margin: 0 4px;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        .heart:nth-child(1) { animation-delay: 0s; }
+        .heart:nth-child(2) { animation-delay: 0.3s; }
+        .heart:nth-child(3) { animation-delay: 0.6s; }
+
+        /* 微信优化：减少动画复杂度 */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* 微信优化：简化粒子效果 */
+        .simple-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            animation: simple-float 4s infinite ease-in-out;
+        }
+
+        @keyframes simple-float {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            20% { opacity: 1; transform: scale(1); }
+            80% { opacity: 1; }
+            100% { transform: translateY(-20vh) scale(0); opacity: 0; }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .enter-btn {
+            background: rgba(255,255,255,0.9);
+            color: #ff6b9d;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .enter-btn:active {
+            transform: scale(0.95);
+            background: rgba(255,255,255,0.8);
+        }
+
+        @media (max-width: 768px) {
+            .title { font-size: 1.8em; }
+            .progress-container { width: 260px; }
+            .loader-container { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="loader-container">
+        <h1 class="title">🎂 菱菱生日祝福</h1>
+        <p class="subtitle">专为微信优化的极速版本<br/>正在准备音乐...</p>
+        
+        <div class="wechat-tip">
+            💡 微信专用：快速启动，流畅体验
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="progress-text" id="progressText">正在连接... 0%</div>
+        
+        <div class="loading-hearts">
+            <span class="heart">💕</span>
+            <span class="heart">🎵</span>
+            <span class="heart">💕</span>
+        </div>
+
+        <button class="enter-btn hidden" id="enterBtn" onclick="enterBirthday()">
+            🎉 立即进入生日页面
+        </button>
+    </div>
+
+    <!-- 微信优化：不预加载任何资源，直接跳转 -->
+    <script>
+        class WeChatOptimizedLoader {
+            constructor() {
+                this.progress = 0;
+                this.progressBar = document.getElementById('progressBar');
+                this.progressText = document.getElementById('progressText');
+                this.enterBtn = document.getElementById('enterBtn');
+                
+                this.init();
+            }
+
+            init() {
+                this.createSimpleParticles();
+                this.detectWeChatEnvironment();
+                this.startSimulatedLoading();
+            }
+
+            createSimpleParticles() {
+                // 微信优化：只创建少量简单粒子
+                for (let i = 0; i < 8; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'simple-particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 4 + 's';
+                    document.body.appendChild(particle);
+                }
+            }
+
+            detectWeChatEnvironment() {
+                const isWeChat = /MicroMessenger/i.test(navigator.userAgent);
+                const isWeChatWork = /wxwork/i.test(navigator.userAgent);
+                
+                if (isWeChat || isWeChatWork) {
+                    console.log('🔍 检测到微信环境，启用微信优化模式');
+                    document.querySelector('.wechat-tip').style.display = 'block';
+                } else {
+                    console.log('🌐 非微信环境，使用标准模式');
+                    document.querySelector('.wechat-tip').innerHTML = '🌐 标准浏览器环境';
+                }
+            }
+
+            startSimulatedLoading() {
+                // 微信优化：不实际加载资源，只是模拟进度给用户反馈
+                let progress = 0;
+                const steps = [
+                    { progress: 20, text: '正在连接服务器...' },
+                    { progress: 40, text: '正在检查网络环境...' },
+                    { progress: 60, text: '正在优化微信体验...' },
+                    { progress: 80, text: '正在准备页面资源...' },
+                    { progress: 100, text: '准备就绪，可以进入！' }
+                ];
+
+                let stepIndex = 0;
+                const interval = setInterval(() => {
+                    if (stepIndex < steps.length) {
+                        const step = steps[stepIndex];
+                        this.updateProgress(step.progress, step.text);
+                        stepIndex++;
+                    } else {
+                        clearInterval(interval);
+                        this.showEnterButton();
+                    }
+                }, 800); // 每0.8秒更新一次，总共4秒完成
+            }
+
+            updateProgress(progress, text) {
+                this.progress = progress;
+                this.progressBar.style.width = progress + '%';
+                this.progressText.textContent = text;
+                console.log(`📊 加载进度: ${progress}% - ${text}`);
+            }
+
+            showEnterButton() {
+                this.progressText.textContent = '🎉 微信优化完成！点击进入生日页面';
+                this.enterBtn.classList.remove('hidden');
+                
+                // 保存微信优化状态
+                localStorage.setItem('birthdayWeChatOptimized', 'true');
+                localStorage.setItem('wechatOptimizeTime', Date.now().toString());
+                
+                // 3秒后自动跳转（如果用户没有点击）
+                setTimeout(() => {
+                    if (!this.hasUserClicked) {
+                        this.enterBirthday();
+                    }
+                }, 3000);
+            }
+
+            enterBirthday() {
+                this.hasUserClicked = true;
+                console.log('🎂 准备进入生日祝福页面...');
+                
+                // 微信优化：直接跳转，不预加载
+                this.progressText.textContent = '正在进入生日页面...';
+                this.enterBtn.textContent = '正在进入...';
+                this.enterBtn.disabled = true;
+                
+                setTimeout(() => {
+                    window.location.href = 'birthday-solid.html';
+                }, 500);
+            }
+        }
+
+        // 全局进入函数
+        function enterBirthday() {
+            if (window.loader) {
+                window.loader.enterBirthday();
+            }
+        }
+
+        // 检查是否需要微信优化加载
+        function checkNeedWeChatLoading() {
+            const lastOptimize = localStorage.getItem('wechatOptimizeTime');
+            const now = Date.now();
+            
+            // 如果超过10分钟，重新优化
+            if (!lastOptimize || (now - parseInt(lastOptimize)) > 600000) {
+                return true;
+            }
+            
+            return !localStorage.getItem('birthdayWeChatOptimized');
+        }
+
+        // 启动微信优化加载器
+        if (checkNeedWeChatLoading()) {
+            console.log('🚀 启动微信优化加载器...');
+            window.loader = new WeChatOptimizedLoader();
+        } else {
+            console.log('✅ 微信优化已完成，直接跳转');
+            document.querySelector('.subtitle').textContent = '微信优化已完成，即将进入...';
+            document.querySelector('.progress-bar').style.width = '100%';
+            document.querySelector('.progress-text').textContent = '准备完成！🎉';
+            setTimeout(() => {
+                window.location.href = 'birthday-solid.html';
+            }, 1000);
+        }
+    </script>
+</body>
+</html> 
